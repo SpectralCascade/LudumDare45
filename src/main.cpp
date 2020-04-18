@@ -1,7 +1,7 @@
 #include "Ossium.h"
+#include "gamecontroller.h"
 
 using namespace Ossium;
-
 
 int main(int argc, char* argv[])
 {
@@ -30,8 +30,15 @@ int main(int argc, char* argv[])
     background->SetSource(&bg);
     background->GetTransform()->SetWorldPosition(Vector2(1280 / 2, 768 / 2));
 
+    renderer.SetBackgroundColor(Colors::GREEN);
+
+    engine.GetScene()->CreateEntity()->AddComponent<GameController>();
+//    engine.GetScene()->CreateEntity()->AddComponent<Server>()->GetTransform()->SetWorldPosition();
+
+    delta.Init();
     while (engine.Update())
     {
+        delta.Update();
     }
 
     TerminateOssium();
