@@ -1,6 +1,7 @@
 #include "gamecontroller.h"
 #include "server.h"
 #include "gui.h"
+#include "simulator.h"
 
 using namespace Ossium;
 
@@ -10,7 +11,10 @@ REGISTER_COMPONENT(GameController);
 
 void GameController::OnCreate()
 {
+    simulator = entity->AddComponent<GameSim>();
+
     gui = entity->AddComponent<GUI>();
+    gui->game = this;
     GetService<InputController>()->AddContext("GUI", gui->input);
 
     mouseIcon = entity->CreateChild()->AddComponent<Texture>();
@@ -24,7 +28,6 @@ void GameController::OnCreate()
         {
             SetPaused(true);
             mouseIcon->SetSource(GetService<ResourceController>()->Get<Image>("assets/server_icon.png", *GetService<Renderer>(), SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STATIC));
-            mouseIcon->SetColorMod(150, 255, 150);
             if (mouseMode != NONE)
             {
                 // TODO clear mouse mode
@@ -44,6 +47,9 @@ void GameController::OnCreate()
                 case PLACE_SERVER:
                     mouseIcon->SetSource(nullptr);
                     mouseMode = NONE;
+                    BuildServer(closest);
+                    break;
+                case NONE:
                     break;
                 }
             }
@@ -70,8 +76,19 @@ void GameController::SetPaused(bool paused)
     clock.SetPaused(!paused);
 }
 
-void GameController::BuildServer(Vector2 position)
+void GameController::BuildServer(unsigned int pos)
 {
+    auto itr = servers.find(pos);
+    if (itr != servers.end() && itr->second != nullptr)
+    {
+        // already placed server here
+        return;
+    }
+    servers[pos] = entity->CreateChild()->AddComponent<Server>();
+    servers[pos]->GetEntity()->AddComponent<Texture>()->SetSource(
+        GetService<ResourceController>()->Get<Image>("assets/server_icon.png", *GetService<Renderer>(), SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STATIC)
+    );
+    servers[pos]->GetTransform()->SetWorldPosition(grid[pos]);
 }
 
 void GameController::Update()
@@ -80,15 +97,24 @@ void GameController::Update()
     if (mouseMode == PLACE_SERVER)
     {
         Vector2 mousePos = gui->input->GetHandler<MouseHandler>()->GetMousePosition();
-        Vector2 closest = Vector2(-4000, -4000);
-        for (Vector2& pos : grid)
+        Vector2 closestVec = Vector2(-4000, -4000);
+        for (unsigned int i = 0, counti = grid.size(); i < counti; i++)
         {
-            if (pos.DistanceSquared(mousePos) < closest.DistanceSquared(mousePos))
+            Vector2 pos = grid[i];
+            if (pos.DistanceSquared(mousePos) < closestVec.DistanceSquared(mousePos))
             {
-                closest = pos;
+                closestVec = pos;
+                closest = i;
             }
         }
-        mouseIcon->GetTransform()->SetWorldPosition(closest);
+        mouseIcon->GetTransform()->SetWorldPosition(closestVec);
+    }
+
+    // Update the simulation
+    if (clock.GetTime() - lastStepTime >= 1000)
+    {
+        simulator->UpdateSim(*this);
+        lastStepTime = clock.GetTime();
     }
 
     // Win condition
@@ -106,5 +132,7 @@ void GameController::Update()
     {
         // TODO win state
     }
+
+    clock.Update(delta.Time());
 
 }

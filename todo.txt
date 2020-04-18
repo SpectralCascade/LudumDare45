@@ -1,7 +1,7 @@
 - Server placement implementation
 - Time simulation steps
-- Build connector button
 - Currency/money cost indicator and game logic
 - Server and connector construction cooldown + building times
-- Hack attack simulation
 - Repair/upgrade simulation
+- Hack attack simulation
+- Build connector button

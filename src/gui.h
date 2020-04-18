@@ -5,6 +5,8 @@
 
 using namespace Ossium;
 
+class GameController;
+
 class GUI : public GraphicComponent
 {
 public:
@@ -21,6 +23,10 @@ public:
     Button* pauseButton = nullptr;
 
     TextLayout moneyText;
+
+    TextLayout timeText;
+
+    GameController* game = nullptr;
 
 };
 

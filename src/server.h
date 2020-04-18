@@ -2,6 +2,7 @@
 #define SERVER_H
 
 #include "Ossium.h"
+#include "simulator.h"
 
 using namespace Ossium;
 
@@ -17,15 +18,15 @@ struct ServerSchema : public Schema<ServerSchema, 20>
 
 };
 
-class Server : public GraphicComponent, public ServerSchema
+class Server : public Automaton, public ServerSchema
 {
 public:
-    CONSTRUCT_SCHEMA(GraphicComponent, ServerSchema);
-    DECLARE_COMPONENT(GraphicComponent, Server);
+    CONSTRUCT_SCHEMA(Automaton, ServerSchema);
+    DECLARE_COMPONENT(Automaton, Server);
 
     void OnCreate();
 
-    void Render(Renderer& renderer);
+    void Simulate(GameSim& sim, GameController& game);
 
 };
 

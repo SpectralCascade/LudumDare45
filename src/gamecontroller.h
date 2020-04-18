@@ -8,6 +8,7 @@ using namespace Ossium;
 /// Forward declarations
 class Server;
 class GUI;
+class GameSim;
 
 /// Global delta time
 extern Delta delta;
@@ -21,8 +22,6 @@ enum MouseInteraction
 struct GameSchema : public Schema<GameSchema, 20>
 {
     DECLARE_BASE_SCHEMA(GameSchema, 20);
-
-    M(vector<Server*>, servers);
 
     // All possible positions that servers can be placed in
     M(vector<Vector2>, grid) = {
@@ -69,7 +68,7 @@ public:
 
     void Update();
 
-    void BuildServer(Vector2 position);
+    void BuildServer(unsigned int pos);
 
     void SetPaused(bool paused);
 
@@ -77,10 +76,18 @@ public:
 
     Clock clock;
 
+    unordered_map<unsigned int, Server*> servers;
+
+    GameSim* simulator = nullptr;
+
 private:
+    unsigned int closest = 0;
+
     Texture* mouseIcon = nullptr;
 
     int pausebtn_handle;
+
+    Uint32 lastStepTime = 0;
 
     MouseInteraction mouseMode = NONE;
 

@@ -1,4 +1,6 @@
 #include "gui.h"
+#include "gamecontroller.h"
+#include "simulator.h"
 
 using namespace Ossium;
 
@@ -51,4 +53,12 @@ void GUI::Render(Renderer& renderer)
     moneyText.SetText(renderer, *font, "<b>Money: $0</b>", true);
     moneyText.Update(*font);
     moneyText.Render(renderer, *font, Vector2(10, 768 - 60));
+
+
+    timeText.SetBounds(Vector2(1000, 1000));
+    timeText.SetPointSize(36);
+    timeText.SetText(renderer, *font, Utilities::Format("<b>Day {0}</b>", game->simulator->GetTimeStep()), true);
+    timeText.Update(*font);
+    timeText.Render(renderer, *font, Vector2(1280 - 200, 768 - 60));
+
 }

@@ -1,4 +1,5 @@
 #include "server.h"
+#include "simulator.h"
 
 using namespace Ossium;
 
@@ -8,12 +9,11 @@ void Server::OnCreate()
 {
     // nasty hack because I'm not serialising
     OnLoadFinish();
-    SetRenderLayer(5);
 }
 
-void Server::Render(Renderer& renderer)
+void Server::Simulate(GameSim& sim, GameController& game)
 {
-    Vector2 t = GetTransform()->GetWorldPosition();
-    Rect(t.x, t.y, 20, 20).DrawFilled(renderer, Colors::RED);
-}
 
+
+
+}
