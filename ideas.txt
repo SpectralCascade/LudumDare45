@@ -1,0 +1,19 @@
+1.  Keep creature alive by guiding them along a cliff edge without falling off!
+
+2.  Mars colony sim - keep colonists alive
+
+3.  Keep plants alive by watering and feeding them with fertiliser
+
+4.  Grow bacteria and try and avoid getting eaten
+
+5.  Resource management - send supplies to teams e.g. ISS crew, or in a medeival setting you can send food supplies to castles under siege etc. to keep an empire alive 
+
+6.  Horror/survival game - monsters spawn in and you have to fend them off. e.g. manage light source/power to keep monsters at bay (keeping a character alive)
+
+7.  Post-apocalyptic internet - keep connections and servers alive.
+
+8.  Keep economy alive - resources like mining, woodchopping etc. and trade
+
+9.  Keep a monster alive by giving it food - if you don't give it enough food, you get eaten
+
+10. Standard survival sim - except you are directing a character who does not always directly follow your directions.
