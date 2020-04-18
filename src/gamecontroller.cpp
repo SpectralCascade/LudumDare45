@@ -6,6 +6,7 @@
 using namespace Ossium;
 
 Delta delta;
+// TODO: get random seed from current time
 Rand rng;
 
 REGISTER_COMPONENT(GameController);
@@ -79,6 +80,12 @@ void GameController::SetPaused(bool paused)
 
 void GameController::BuildServer(unsigned int pos)
 {
+    if (simulator->money < 50)
+    {
+        // Show error
+        return;
+    }
+
     auto itr = servers.find(pos);
     if (itr != servers.end() && itr->second != nullptr)
     {
@@ -90,6 +97,9 @@ void GameController::BuildServer(unsigned int pos)
         GetService<ResourceController>()->Get<Image>("assets/server_icon.png", *GetService<Renderer>(), SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STATIC)
     );
     servers[pos]->GetTransform()->SetWorldPosition(grid[pos]);
+
+    simulator->money -= 50;
+
     SetPaused(false);
 }
 

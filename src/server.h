@@ -40,6 +40,13 @@ public:
 
     virtual void Simulate(GameSim& sim, GameController& game);
 
+    void Render(Renderer& renderer);
+
+    string GetStatusText();
+
+private:
+    TextLayout infoText;
+
 };
 
 #endif // SERVER_H
