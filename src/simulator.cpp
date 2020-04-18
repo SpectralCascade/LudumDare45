@@ -18,11 +18,11 @@ REGISTER_COMPONENT(GameSim);
 void GameSim::UpdateSim(GameController& game)
 {
     timeStep++;
-    entity->GetScene()->WalkComponents<Automaton>(
-        [&] (Automaton* automaton) {
-            automaton->Simulate(*this, game);
-        }
-    );
+    vector<Automaton*> automatons = entity->GetComponentsInChildren<Automaton>();
+    for (Automaton* automaton : automatons)
+    {
+        automaton->Simulate(*this, game);
+    }
 }
 
 unsigned int GameSim::GetTimeStep()

@@ -10,8 +10,9 @@ class Server;
 class GUI;
 class GameSim;
 
-/// Global delta time
+/// Globals
 extern Delta delta;
+extern Rand rng;
 
 enum MouseInteraction
 {

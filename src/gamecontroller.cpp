@@ -6,6 +6,7 @@
 using namespace Ossium;
 
 Delta delta;
+Rand rng;
 
 REGISTER_COMPONENT(GameController);
 
@@ -20,7 +21,7 @@ void GameController::OnCreate()
     mouseIcon = entity->CreateChild()->AddComponent<Texture>();
 
     pausebtn_handle = gui->pauseButton->OnClicked += [&] (const Button& caller) {
-        SetPaused(clock.IsPaused());
+        SetPaused(!clock.IsPaused());
     };
 
     gui->buildServerButton->OnClicked += [&] (const Button& caller) {
@@ -72,8 +73,8 @@ void GameController::OnCreate()
 
 void GameController::SetPaused(bool paused)
 {
-    gui->pauseButton->sprite->ChangeState(paused ? "pause" : "play");
-    clock.SetPaused(!paused);
+    gui->pauseButton->sprite->ChangeState(paused ? "play" : "pause");
+    clock.SetPaused(paused);
 }
 
 void GameController::BuildServer(unsigned int pos)
@@ -89,6 +90,7 @@ void GameController::BuildServer(unsigned int pos)
         GetService<ResourceController>()->Get<Image>("assets/server_icon.png", *GetService<Renderer>(), SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STATIC)
     );
     servers[pos]->GetTransform()->SetWorldPosition(grid[pos]);
+    SetPaused(false);
 }
 
 void GameController::Update()

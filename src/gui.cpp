@@ -50,7 +50,7 @@ void GUI::Render(Renderer& renderer)
     Font* font = GetService<ResourceController>()->Get<Font>("assets/Orkney Regular.ttf", 96);
     moneyText.SetBounds(Vector2(1000, 1000));
     moneyText.SetPointSize(36);
-    moneyText.SetText(renderer, *font, "<b>Money: $0</b>", true);
+    moneyText.SetText(renderer, *font, Utilities::Format("<b>Money: ${0}</b>", game->simulator->money), true);
     moneyText.Update(*font);
     moneyText.Render(renderer, *font, Vector2(10, 768 - 60));
 

@@ -29,6 +29,12 @@ public:
 
     unsigned int GetTimeStep();
 
+//
+//  GAME LOGIC VARIABLES
+//
+
+    int money = 100;
+
 private:
     unsigned int timeStep = 0;
 

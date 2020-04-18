@@ -1,9 +1,10 @@
 # depslib dependency file v1.0
-1587241443 source:c:\users\2013b\git\ludumdare46\src\server.cpp
+1587244000 source:c:\users\2013b\git\ludumdare46\src\server.cpp
 	"server.h"
+	"gamecontroller.h"
 	"simulator.h"
 
-1587241699 c:\users\2013b\git\ludumdare46\src\server.h
+1587244066 c:\users\2013b\git\ludumdare46\src\server.h
 	"Ossium.h"
 	"simulator.h"
 
@@ -166,7 +167,7 @@
 	"ecs.h"
 	"globalservices.h"
 
-1587241975 c:\users\2013b\git\ossium\engine\src\core\ecs.h
+1587244745 c:\users\2013b\git\ossium\engine\src\core\ecs.h
 	<vector>
 	<string.h>
 	<unordered_map>
@@ -478,16 +479,16 @@
 	"Ossium.h"
 	"gamecontroller.h"
 
-1587242324 c:\users\2013b\git\ludumdare46\src\gamecontroller.h
+1587243627 c:\users\2013b\git\ludumdare46\src\gamecontroller.h
 	"Ossium.h"
 
-1587241564 source:c:\users\2013b\git\ludumdare46\src\gamecontroller.cpp
+1587243677 source:c:\users\2013b\git\ludumdare46\src\gamecontroller.cpp
 	"gamecontroller.h"
 	"server.h"
 	"gui.h"
 	"simulator.h"
 
-1587242416 source:c:\users\2013b\git\ludumdare46\src\gui.cpp
+1587243289 source:c:\users\2013b\git\ludumdare46\src\gui.cpp
 	"gui.h"
 	"gamecontroller.h"
 	"simulator.h"
@@ -495,10 +496,10 @@
 1587242386 c:\users\2013b\git\ludumdare46\src\gui.h
 	"Ossium.h"
 
-1587242052 c:\users\2013b\git\ludumdare46\src\simulator.h
+1587244345 c:\users\2013b\git\ludumdare46\src\simulator.h
 	"Ossium.h"
 
-1587242084 source:c:\users\2013b\git\ludumdare46\src\simulator.cpp
+1587244625 source:c:\users\2013b\git\ludumdare46\src\simulator.cpp
 	"simulator.h"
 	"gamecontroller.h"
 

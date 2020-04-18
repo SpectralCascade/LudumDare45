@@ -5,3 +5,4 @@
 - Repair/upgrade simulation
 - Hack attack simulation
 - Build connector button
+- Introduce players to gameplay
