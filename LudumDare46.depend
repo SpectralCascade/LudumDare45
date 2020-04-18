@@ -1,8 +1,8 @@
 # depslib dependency file v1.0
-1587212616 source:c:\users\2013b\git\ludumdare46\src\server.cpp
+1587213003 source:c:\users\2013b\git\ludumdare46\src\server.cpp
 	"server.h"
 
-1587212547 c:\users\2013b\git\ludumdare46\src\server.h
+1587227944 c:\users\2013b\git\ludumdare46\src\server.h
 	"Ossium.h"
 
 1587168263 c:\users\2013b\git\ossium\engine\src\ossium.h
@@ -476,10 +476,17 @@
 	"Ossium.h"
 	"gamecontroller.h"
 
-1587212177 c:\users\2013b\git\ludumdare46\src\gamecontroller.h
+1587231347 c:\users\2013b\git\ludumdare46\src\gamecontroller.h
 	"Ossium.h"
 
-1587212958 source:c:\users\2013b\git\ludumdare46\src\gamecontroller.cpp
+1587231517 source:c:\users\2013b\git\ludumdare46\src\gamecontroller.cpp
 	"gamecontroller.h"
 	"server.h"
+	"gui.h"
+
+1587229946 source:c:\users\2013b\git\ludumdare46\src\gui.cpp
+	"gui.h"
+
+1587231568 c:\users\2013b\git\ludumdare46\src\gui.h
+	"Ossium.h"
 

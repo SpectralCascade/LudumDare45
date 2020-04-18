@@ -7,7 +7,7 @@ using namespace Ossium;
 
 class Server;
 
-struct ServerSchema : Schema<ServerSchema, 20>
+struct ServerSchema : public Schema<ServerSchema, 20>
 {
     DECLARE_BASE_SCHEMA(ServerSchema, 20);
 
@@ -17,7 +17,7 @@ struct ServerSchema : Schema<ServerSchema, 20>
 
 };
 
-class Server : public GraphicComponent, ServerSchema
+class Server : public GraphicComponent, public ServerSchema
 {
 public:
     CONSTRUCT_SCHEMA(GraphicComponent, ServerSchema);

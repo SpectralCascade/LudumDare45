@@ -1,5 +1,6 @@
 #include "gamecontroller.h"
 #include "server.h"
+#include "gui.h"
 
 using namespace Ossium;
 
@@ -9,7 +10,16 @@ REGISTER_COMPONENT(GameController);
 
 void GameController::OnCreate()
 {
-    Rand rng;
+    gui = entity->AddComponent<GUI>();
+    GetService<InputController>()->AddContext("GUI", gui->input);
+
+    pausebtn_handle = gui->pauseButton->OnClicked += [&] (const Button& caller) {
+        bool ispaused = clock.IsPaused();
+        gui->pauseButton->sprite->ChangeState(ispaused ? "pause" : "play");
+        clock.SetPaused(!ispaused);
+    };
+
+    /*Rand rng;
 
     for (int i = 0; i < serversToWin; i++)
     {
@@ -17,8 +27,12 @@ void GameController::OnCreate()
         server->GetTransform()->SetWorldPosition(Vector2(rng.Int(10, 1280 - 10), rng.Int(10, 768 - 10)));
 
         servers.push_back(server);
-    }
+    }*/
 
+}
+
+void GameController::BuildServer(Vector2 position)
+{
 }
 
 void GameController::Update()
