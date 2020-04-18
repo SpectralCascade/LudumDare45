@@ -12,6 +12,12 @@ class GUI;
 /// Global delta time
 extern Delta delta;
 
+enum MouseInteraction
+{
+    NONE = 0,
+    PLACE_SERVER
+};
+
 struct GameSchema : public Schema<GameSchema, 20>
 {
     DECLARE_BASE_SCHEMA(GameSchema, 20);
@@ -75,6 +81,8 @@ private:
     Texture* mouseIcon = nullptr;
 
     int pausebtn_handle;
+
+    MouseInteraction mouseMode = NONE;
 
 };
 

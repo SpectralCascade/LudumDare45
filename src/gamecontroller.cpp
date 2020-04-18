@@ -24,8 +24,33 @@ void GameController::OnCreate()
         {
             SetPaused(true);
             mouseIcon->SetSource(GetService<ResourceController>()->Get<Image>("assets/server_icon.png", *GetService<Renderer>(), SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STATIC));
+            mouseIcon->SetColorMod(150, 255, 150);
+            if (mouseMode != NONE)
+            {
+                // TODO clear mouse mode
+            }
+            mouseMode = PLACE_SERVER;
         }
     };
+
+    MouseHandler* mouse = gui->input->GetHandler<MouseHandler>();
+    mouse->AddAction(
+        "GUI_click",
+        [&] (const MouseInput& data) {
+            if (data.state)
+            {
+                switch (mouseMode)
+                {
+                case PLACE_SERVER:
+                    mouseIcon->SetSource(nullptr);
+                    mouseMode = NONE;
+                    break;
+                }
+            }
+            return ActionOutcome::Ignore;
+        },
+        MouseEvent::MOUSE_BUTTON_LEFT
+    );
 
     /*Rand rng;
 
@@ -52,9 +77,18 @@ void GameController::BuildServer(Vector2 position)
 void GameController::Update()
 {
 
-    if (mouseIcon->GetSource() != nullptr)
+    if (mouseMode == PLACE_SERVER)
     {
-        mouseIcon->GetTransform()->SetWorldPosition(gui->input->GetHandler<MouseHandler>()->GetMousePosition());
+        Vector2 mousePos = gui->input->GetHandler<MouseHandler>()->GetMousePosition();
+        Vector2 closest = Vector2(-4000, -4000);
+        for (Vector2& pos : grid)
+        {
+            if (pos.DistanceSquared(mousePos) < closest.DistanceSquared(mousePos))
+            {
+                closest = pos;
+            }
+        }
+        mouseIcon->GetTransform()->SetWorldPosition(closest);
     }
 
     // Win condition
