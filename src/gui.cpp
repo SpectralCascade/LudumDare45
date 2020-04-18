@@ -6,7 +6,7 @@ REGISTER_COMPONENT(GUI);
 
 void GUI::OnCreate()
 {
-    Component::OnCreate();
+    GraphicComponent::OnCreate();
     input = entity->AddComponent<InputGUI>();
 
     // build server button
@@ -39,4 +39,16 @@ void GUI::OnCreate()
     buildServerButton->GetTransform()->SetWorldPosition(Vector2(50, (768 / 2) + 60));
     pauseButton->GetTransform()->SetWorldPosition(Vector2(1280 / 2, 768 - 50));
 
+    SetRenderLayer(8);
+
+}
+
+void GUI::Render(Renderer& renderer)
+{
+    Font* font = GetService<ResourceController>()->Get<Font>("assets/Orkney Regular.ttf", 96);
+    moneyText.SetBounds(Vector2(1000, 1000));
+    moneyText.SetPointSize(36);
+    moneyText.SetText(renderer, *font, "<b>Money: $0</b>", true);
+    moneyText.Update(*font);
+    moneyText.Render(renderer, *font, Vector2(10, 768 - 60));
 }

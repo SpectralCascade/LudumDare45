@@ -13,10 +13,18 @@ void GameController::OnCreate()
     gui = entity->AddComponent<GUI>();
     GetService<InputController>()->AddContext("GUI", gui->input);
 
+    mouseIcon = entity->CreateChild()->AddComponent<Texture>();
+
     pausebtn_handle = gui->pauseButton->OnClicked += [&] (const Button& caller) {
-        bool ispaused = clock.IsPaused();
-        gui->pauseButton->sprite->ChangeState(ispaused ? "pause" : "play");
-        clock.SetPaused(!ispaused);
+        SetPaused(clock.IsPaused());
+    };
+
+    gui->buildServerButton->OnClicked += [&] (const Button& caller) {
+        if (true)
+        {
+            SetPaused(true);
+            mouseIcon->SetSource(GetService<ResourceController>()->Get<Image>("assets/server_icon.png", *GetService<Renderer>(), SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STATIC));
+        }
     };
 
     /*Rand rng;
@@ -31,12 +39,23 @@ void GameController::OnCreate()
 
 }
 
+void GameController::SetPaused(bool paused)
+{
+    gui->pauseButton->sprite->ChangeState(paused ? "pause" : "play");
+    clock.SetPaused(!paused);
+}
+
 void GameController::BuildServer(Vector2 position)
 {
 }
 
 void GameController::Update()
 {
+
+    if (mouseIcon->GetSource() != nullptr)
+    {
+        mouseIcon->GetTransform()->SetWorldPosition(gui->input->GetHandler<MouseHandler>()->GetMousePosition());
+    }
 
     // Win condition
     bool won = true;

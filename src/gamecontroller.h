@@ -65,11 +65,15 @@ public:
 
     void BuildServer(Vector2 position);
 
+    void SetPaused(bool paused);
+
     GUI* gui = nullptr;
 
     Clock clock;
 
 private:
+    Texture* mouseIcon = nullptr;
+
     int pausebtn_handle;
 
 };

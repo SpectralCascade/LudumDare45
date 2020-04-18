@@ -5,18 +5,22 @@
 
 using namespace Ossium;
 
-class GUI : public Component
+class GUI : public GraphicComponent
 {
 public:
     DECLARE_COMPONENT(Component, GUI);
 
     void OnCreate();
 
+    void Render(Renderer& renderer);
+
     InputGUI* input = nullptr;
 
     Button* buildServerButton = nullptr;
 
     Button* pauseButton = nullptr;
+
+    TextLayout moneyText;
 
 };
 

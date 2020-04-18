@@ -27,6 +27,7 @@ int main(int argc, char* argv[])
     bg.PushGPU(renderer, SDL_TEXTUREACCESS_STATIC);
 
     Texture* background = engine.GetScene()->CreateEntity()->AddComponent<Texture>();
+    background->SetColorMod(50, 50, 255);
     background->SetSource(&bg);
     background->GetTransform()->SetWorldPosition(Vector2(1280 / 2, 768 / 2));
 
