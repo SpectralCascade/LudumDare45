@@ -1,0 +1,3 @@
+
+- Time: servers take some time to repair.
+- Currency: people pay to connect to your network. You can use the currency to repair and upgrade the network.
