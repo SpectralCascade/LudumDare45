@@ -76,6 +76,15 @@
 			<Add option="-Wall" />
 			<Add option="-fexceptions" />
 		</Compiler>
+		<Unit filename="src/gamecontroller.cpp" />
+		<Unit filename="src/gamecontroller.h" />
+		<Unit filename="src/gui.cpp" />
+		<Unit filename="src/gui.h" />
+		<Unit filename="src/main.cpp" />
+		<Unit filename="src/server.cpp" />
+		<Unit filename="src/server.h" />
+		<Unit filename="src/simulator.cpp" />
+		<Unit filename="src/simulator.h" />
 		<Extensions>
 			<code_completion />
 			<envvars />
