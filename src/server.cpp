@@ -1,6 +1,7 @@
 #include "server.h"
 #include "gamecontroller.h"
 #include "simulator.h"
+#include "gui.h"
 
 using namespace Ossium;
 
@@ -10,6 +11,7 @@ void Server::OnCreate()
 {
     // nasty hack because I'm not serialising
     OnLoadFinish();
+    SetRenderLayer(40);
 }
 
 void Server::Simulate(GameSim& sim, GameController& game)
@@ -54,8 +56,9 @@ void Server::Simulate(GameSim& sim, GameController& game)
 
 void Server::Render(Renderer& renderer)
 {
-/*    if (entity->GetComponent<Texture>()->GetRect().Contains(mousePos))
-    {*/
+    Vector2 mousePos = global_game->gui->input->GetHandler<MouseHandler>()->GetMousePosition();
+    if (entity->GetComponent<Texture>()->GetRect(GetTransform()->GetWorldPosition()).Contains(mousePos))
+    {
         Font* font = GetService<ResourceController>()->Get<Font>("assets/Orkney Regular.ttf", 36);
         infoText.SetBounds(Vector2(1000, 1000));
         infoText.SetPointSize(24);
@@ -72,7 +75,7 @@ void Server::Render(Renderer& renderer)
         infoBox.Draw(renderer, Colors::WHITE);
 
         infoText.Render(renderer, *font, pos);
-    //}
+    }
 }
 
 string Server::GetStatusText()

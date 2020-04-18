@@ -9,10 +9,12 @@ using namespace Ossium;
 class Server;
 class GUI;
 class GameSim;
+class GameController;
 
 /// Globals
 extern Delta delta;
 extern Rand rng;
+extern GameController* global_game;
 
 enum MouseInteraction
 {

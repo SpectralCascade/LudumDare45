@@ -8,11 +8,13 @@ using namespace Ossium;
 Delta delta;
 // TODO: get random seed from current time
 Rand rng;
+GameController* global_game = nullptr;
 
 REGISTER_COMPONENT(GameController);
 
 void GameController::OnCreate()
 {
+    global_game = this;
     simulator = entity->AddComponent<GameSim>();
 
     gui = entity->AddComponent<GUI>();
