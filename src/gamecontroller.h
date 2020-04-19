@@ -19,7 +19,10 @@ extern GameController* global_game;
 enum MouseInteraction
 {
     NONE = 0,
-    PLACE_SERVER
+    PLACE_SERVER,
+    REPAIR_SERVER,
+    CONNECT_SERVER_START,
+    CONNECT_SERVER_END
 };
 
 struct GameSchema : public Schema<GameSchema, 20>
@@ -73,7 +76,13 @@ public:
 
     void BuildServer(unsigned int pos);
 
+    void RepairServer(Vector2 pos);
+
+    void ConnectServers(Server* first, Server* second);
+
     void SetPaused(bool paused);
+
+    Server* FindServer(Vector2 pos);
 
     GUI* gui = nullptr;
 
@@ -93,6 +102,8 @@ private:
     Uint32 lastStepTime = 0;
 
     MouseInteraction mouseMode = NONE;
+
+    Server* connectee = nullptr;
 
 };
 

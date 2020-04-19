@@ -14,6 +14,9 @@ REGISTER_COMPONENT(GameController);
 
 void GameController::OnCreate()
 {
+    /// TODO: REMOVE ME
+    clock.Scale(2);
+
     global_game = this;
     simulator = entity->AddComponent<GameSim>();
 
@@ -22,6 +25,7 @@ void GameController::OnCreate()
     GetService<InputController>()->AddContext("GUI", gui->input);
 
     mouseIcon = entity->CreateChild()->AddComponent<Texture>();
+    mouseIcon->SetRenderLayer(90);
 
     pausebtn_handle = gui->pauseButton->OnClicked += [&] (const Button& caller) {
         SetPaused(!clock.IsPaused());
@@ -40,6 +44,38 @@ void GameController::OnCreate()
         }
     };
 
+    gui->repairButton->OnClicked += [&] (const Button& caller) {
+        if (true)
+        {
+            SetPaused(true);
+            mouseIcon->SetSource(GetService<ResourceController>()->Get<Image>("assets/server_repairing.png", *GetService<Renderer>(), SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STATIC));
+            if (mouseMode != NONE)
+            {
+                // TODO clear mouse mode
+            }
+            mouseMode = REPAIR_SERVER;
+        }
+        else
+        {
+        }
+    };
+
+    gui->connectorButton->OnClicked += [&] (const Button& caller) {
+        if (true)
+        {
+            SetPaused(true);
+            mouseIcon->SetSource(GetService<ResourceController>()->Get<Image>("assets/lay_connector.png", *GetService<Renderer>(), SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STATIC));
+            if (mouseMode != NONE)
+            {
+                // TODO clear mouse mode
+            }
+            mouseMode = CONNECT_SERVER_START;
+        }
+        else
+        {
+        }
+    };
+
     MouseHandler* mouse = gui->input->GetHandler<MouseHandler>();
     mouse->AddAction(
         "GUI_click",
@@ -48,13 +84,56 @@ void GameController::OnCreate()
             {
                 switch (mouseMode)
                 {
-                case PLACE_SERVER:
-                    mouseIcon->SetSource(nullptr);
-                    mouseMode = NONE;
-                    BuildServer(closest);
-                    break;
-                case NONE:
-                    break;
+                    case PLACE_SERVER:
+                    {
+                        mouseIcon->SetSource(nullptr);
+                        mouseMode = NONE;
+                        BuildServer(closest);
+                        break;
+                    }
+                    case REPAIR_SERVER:
+                    {
+                        mouseIcon->SetSource(nullptr);
+                        mouseMode = NONE;
+                        RepairServer(Vector2(data.x, data.y));
+                        break;
+                    }
+                    case CONNECT_SERVER_START:
+                    {
+                        Server* server = FindServer(Vector2(data.x, data.y));
+                        if (server != nullptr)
+                        {
+                            connectee = server;
+                            mouseMode = CONNECT_SERVER_END;
+                        }
+                        else
+                        {
+                            // flash cancel
+                            mouseMode = NONE;
+                            mouseIcon->SetSource(nullptr);
+                        }
+                        break;
+                    }
+                    case CONNECT_SERVER_END:
+                    {
+                        Server* server = FindServer(Vector2(data.x, data.y));
+                        if (server != nullptr)
+                        {
+                            ConnectServers(connectee, server);
+                        }
+                        else
+                        {
+                            // flash cancel
+                        }
+                        mouseMode = NONE;
+                        connectee = nullptr;
+                        mouseIcon->SetSource(nullptr);
+                        break;
+                    }
+                    case NONE:
+                    {
+                        break;
+                    }
                 }
             }
             return ActionOutcome::Ignore;
@@ -82,6 +161,8 @@ void GameController::SetPaused(bool paused)
 
 void GameController::BuildServer(unsigned int pos)
 {
+    SetPaused(false);
+
     if (simulator->money < 50)
     {
         // Show error
@@ -98,19 +179,72 @@ void GameController::BuildServer(unsigned int pos)
     servers[pos]->GetEntity()->AddComponent<Texture>()->SetSource(
         GetService<ResourceController>()->Get<Image>("assets/server_icon.png", *GetService<Renderer>(), SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STATIC)
     );
+    servers[pos]->GetEntity()->GetComponent<Texture>()->SetRenderLayer(40);
     servers[pos]->GetTransform()->SetWorldPosition(grid[pos]);
+    servers[pos]->serverId = pos;
 
     simulator->money -= 50;
 
+}
+
+Server* GameController::FindServer(Vector2 pos)
+{
+    for (auto itr : servers)
+    {
+        if (itr.second != nullptr && itr.second->GetEntity()->GetComponent<Texture>()->GetRect(itr.second->GetTransform()->GetWorldPosition()).Contains(pos))
+        {
+            return itr.second;
+        }
+    }
+    return nullptr;
+}
+
+void GameController::RepairServer(Vector2 pos)
+{
     SetPaused(false);
+
+    Server* server = FindServer(pos);
+    if (server != nullptr)
+    {
+        if (server->status == SERVER_FAULT)
+        {
+            if (simulator->money >= 15)
+            {
+                simulator->money -= 15;
+                server->status = ServerState::SERVER_REPAIRING;
+            }
+            else
+            {
+                // TODO: not enough money
+            }
+            return;
+        }
+    }
+    // TODO: cancel noise
+}
+
+void GameController::ConnectServers(Server* first, Server* second)
+{
+    if (first != second &&
+        Utilities::Pick<Server*>(
+            first->connections,
+            [&] (auto server) {
+                return server == second;
+            }
+    ) == nullptr)
+    {
+        first->connections.push_back(second);
+        second->connections.push_back(first);
+    }
+    // cancel sound
 }
 
 void GameController::Update()
 {
+    Vector2 mousePos = gui->input->GetHandler<MouseHandler>()->GetMousePosition();
 
     if (mouseMode == PLACE_SERVER)
     {
-        Vector2 mousePos = gui->input->GetHandler<MouseHandler>()->GetMousePosition();
         Vector2 closestVec = Vector2(-4000, -4000);
         for (unsigned int i = 0, counti = grid.size(); i < counti; i++)
         {
@@ -123,6 +257,12 @@ void GameController::Update()
         }
         mouseIcon->GetTransform()->SetWorldPosition(closestVec);
     }
+    else if (mouseMode == REPAIR_SERVER || mouseMode == CONNECT_SERVER_START || mouseMode == CONNECT_SERVER_END)
+    {
+        mouseIcon->GetTransform()->SetWorldPosition(mousePos);
+    }
+    mouseIcon->SetRenderWidth(2);
+    mouseIcon->SetRenderHeight(2);
 
     // Update the simulation
     if (clock.GetTime() - lastStepTime >= 1000)

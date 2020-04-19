@@ -2,7 +2,10 @@
 - Time simulation steps
 - Currency/money cost indicator and game logic
 - Server and connector construction cooldown + building times
-- Repair/upgrade simulation
-- Hack attack simulation
+- Repair simulation
 - Build connector button
+- Server connections
+- UPGRADES + RAMP UP FAULTS/HACKERS
 - Introduce players to gameplay
+- Hack attack simulation
+- Pause stack

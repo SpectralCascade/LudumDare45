@@ -1,10 +1,11 @@
 # depslib dependency file v1.0
-1587244000 source:c:\users\2013b\git\ludumdare46\src\server.cpp
+1587317384 source:c:\users\2013b\git\ludumdare46\src\server.cpp
 	"server.h"
 	"gamecontroller.h"
 	"simulator.h"
+	"gui.h"
 
-1587246757 c:\users\2013b\git\ludumdare46\src\server.h
+1587316060 c:\users\2013b\git\ludumdare46\src\server.h
 	"Ossium.h"
 	"simulator.h"
 
@@ -479,21 +480,21 @@
 	"Ossium.h"
 	"gamecontroller.h"
 
-1587247458 c:\users\2013b\git\ludumdare46\src\gamecontroller.h
+1587313159 c:\users\2013b\git\ludumdare46\src\gamecontroller.h
 	"Ossium.h"
 
-1587247490 source:c:\users\2013b\git\ludumdare46\src\gamecontroller.cpp
+1587315567 source:c:\users\2013b\git\ludumdare46\src\gamecontroller.cpp
 	"gamecontroller.h"
 	"server.h"
 	"gui.h"
 	"simulator.h"
 
-1587247223 source:c:\users\2013b\git\ludumdare46\src\gui.cpp
+1587312274 source:c:\users\2013b\git\ludumdare46\src\gui.cpp
 	"gui.h"
 	"gamecontroller.h"
 	"simulator.h"
 
-1587242386 c:\users\2013b\git\ludumdare46\src\gui.h
+1587311605 c:\users\2013b\git\ludumdare46\src\gui.h
 	"Ossium.h"
 
 1587244345 c:\users\2013b\git\ludumdare46\src\simulator.h

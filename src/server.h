@@ -28,6 +28,10 @@ struct ServerSchema : public Schema<ServerSchema, 20>
 
     M(unsigned int, buildingTimeLeft) = 3;
 
+    M(unsigned int, daysSinceFault) = 0;
+
+    M(unsigned int, serverId);
+
 };
 
 class Server : public Automaton, public ServerSchema
@@ -42,10 +46,14 @@ public:
 
     void Render(Renderer& renderer);
 
+    void OnDestroy();
+
     string GetStatusText();
 
 private:
     TextLayout infoText;
+
+    Texture* icon = nullptr;
 
 };
 

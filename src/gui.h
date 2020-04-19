@@ -20,6 +20,10 @@ public:
 
     Button* buildServerButton = nullptr;
 
+    Button* repairButton = nullptr;
+
+    Button* connectorButton = nullptr;
+
     Button* pauseButton = nullptr;
 
     TextLayout moneyText;
