@@ -51,7 +51,7 @@ void Popup::Render(Renderer& renderer)
         box.x = GetTransform()->GetWorldPosition().x - (640 / 2);
         box.y = GetTransform()->GetWorldPosition().y - (200 / 2);
 
-        box.DrawFilled(renderer, Colors::CYAN);
+        box.DrawFilled(renderer, Alpha(Colors::CYAN, 200));
         box.Draw(renderer, Colors::WHITE);
 
         layout.SetText(renderer, *font, currentText, true);

@@ -86,7 +86,7 @@ void Server::Simulate(GameSim& sim, GameController& game, int stage)
                         game.gui->popup->AddMessage("\n\nServers have a small chance of developing a fault while connected to the network. The more connections a server has, the more likely it is to have a fault.");
                         game.gui->popup->AddMessage("\n\nOno! One of your servers have developed a <b>fault</b> (as indicated by the yellow warning icon)!",
                                                     true,
-                                                    Rect(GetTransform()->GetWorldPosition().x - 12, GetTransform()->GetWorldPosition().y - 12, 24, 24)
+                                                    Rect(GetTransform()->GetWorldPosition().x - 22, GetTransform()->GetWorldPosition().y - 22, 44, 44)
                         );
                         game.gui->popup->GetTransform()->SetWorldPosition(Vector2(1280 / 2, 100));
                         game.gui->popup->ShowNextMessage();
