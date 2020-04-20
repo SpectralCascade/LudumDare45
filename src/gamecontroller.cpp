@@ -127,7 +127,11 @@ void GameController::OnCreate()
                     {
                         mouseIcon->SetSource(nullptr);
                         mouseMode = NONE;
-                        BuildServer(closest);
+                        if (closest < grid.size())
+                        {
+                            BuildServer(closest);
+                        }
+                        SetPaused(false);
                         break;
                     }
                     case REPAIR_SERVER:
@@ -135,6 +139,7 @@ void GameController::OnCreate()
                         mouseIcon->SetSource(nullptr);
                         mouseMode = NONE;
                         RepairServer(Vector2(data.x, data.y));
+                        SetPaused(false);
                         break;
                     }
                     case CONNECT_SERVER_START:
@@ -168,6 +173,7 @@ void GameController::OnCreate()
                         mouseMode = NONE;
                         connectee = nullptr;
                         mouseIcon->SetSource(nullptr);
+                        SetPaused(false);
                         break;
                     }
                     case CUT_CONNECTOR_START:
@@ -201,6 +207,7 @@ void GameController::OnCreate()
                         mouseMode = NONE;
                         connectee = nullptr;
                         mouseIcon->SetSource(nullptr);
+                        SetPaused(false);
                         break;
                     }
                     case PURGE_SERVER:
@@ -216,6 +223,7 @@ void GameController::OnCreate()
                         }
                         mouseMode = NONE;
                         mouseIcon->SetSource(nullptr);
+                        SetPaused(false);
                         break;
                     }
                     case NONE:
@@ -293,8 +301,6 @@ void GameController::BuildServer(unsigned int pos)
 
 void GameController::PurgeServer(Server* server)
 {
-    SetPaused(false);
-
     if (server->status == SERVER_HACKED)
     {
         if (simulator->money < GameSim::purge_cost)
@@ -325,8 +331,6 @@ Server* GameController::FindServer(Vector2 pos)
 
 void GameController::RepairServer(Vector2 pos)
 {
-    SetPaused(false);
-
     Server* server = FindServer(pos);
     if (server != nullptr)
     {
@@ -354,8 +358,6 @@ int GameController::ConnectionCost(Server* a, Server* b)
 
 void GameController::ConnectServers(Server* first, Server* second)
 {
-    SetPaused(false);
-
     int cost = ConnectionCost(first, second);
     if (simulator->money < cost)
     {
@@ -382,8 +384,6 @@ void GameController::ConnectServers(Server* first, Server* second)
 
 void GameController::CutServers(Server* first, Server* second)
 {
-    SetPaused(false);
-
     if (first != second)
     {
 
@@ -444,14 +444,26 @@ void GameController::Update()
         for (unsigned int i = 0, counti = grid.size(); i < counti; i++)
         {
             Vector2 pos = grid[i];
-            if (pos.DistanceSquared(mousePos) < closestVec.DistanceSquared(mousePos))
+            if (FindServer(pos) == nullptr)
             {
-                closestVec = pos;
-                closest = i;
+                if (pos.DistanceSquared(mousePos) < closestVec.DistanceSquared(mousePos))
+                {
+                    closestVec = pos;
+                    closest = i;
+                }
             }
         }
-        mouseIcon->GetTransform()->SetWorldPosition(closestVec);
-        InfoMessage(Utilities::Format("Server Cost: {0}", GameSim::server_cost));
+        if (mousePos.Distance(closestVec) < 90)
+        {
+            mouseIcon->GetTransform()->SetWorldPosition(closestVec);
+            InfoMessage(Utilities::Format("Server Cost: {0}", GameSim::server_cost));
+        }
+        else
+        {
+            mouseIcon->GetTransform()->SetWorldPosition(mousePos);
+            // Don't allow placement
+            closest = grid.size();
+        }
     }
     else if (mouseMode != MouseInteraction::NONE)
     {
