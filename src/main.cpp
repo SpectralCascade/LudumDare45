@@ -92,9 +92,9 @@ int main(int argc, char* argv[])
             while (engine.Update())
             {
                 delta.Update();
+                state = game->restart ? RUNGAME : MENU;
             }
 
-            state = MENU;
         }
 
     }

@@ -16,11 +16,13 @@ public:
 
     void Init(GUI* gameGUI, InputController* inputController);
 
-    void AddMessage(string text, bool blackout = true, Rect area = {0, 0, 0, 0});
+    void AddMessage(string text, bool blackout = true, Rect area = {0, 0, 0, 0}, bool blockInput = true);
 
     void Render(Renderer& renderer);
 
-    void ShowNextMessage();
+    void Update();
+
+    void ShowNextMessage(float delay = 0);
 
     void Show();
 
@@ -37,6 +39,8 @@ private:
 
     stack<bool> blockHighlights;
 
+    stack<bool> blockInputs;
+
     bool blockHighlight = true;
 
     TextLayout layout;
@@ -46,6 +50,8 @@ private:
     string currentText;
 
     Rect currentHighlight = {0, 0, 0, 0};
+
+    float messageWait = 0;
 
 };
 

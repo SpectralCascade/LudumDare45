@@ -1,5 +1,6 @@
 #include "popup.h"
 #include "gui.h"
+#include "gamecontroller.h"
 
 using namespace std;
 using namespace Ossium;
@@ -59,17 +60,17 @@ void Popup::Render(Renderer& renderer)
     }
 }
 
-void Popup::AddMessage(string text, bool blackout, Rect area)
+void Popup::AddMessage(string text, bool blackout, Rect area, bool blockInput)
 {
     textMessages.push(text);
     highlightAreas.push(area);
     blockHighlights.push(blackout);
+    blockInputs.push(blockInput);
 }
 
 void Popup::Show()
 {
     shown = true;
-    gui->input->SetActive(false);
     SetActive(true);
 }
 
@@ -80,21 +81,49 @@ void Popup::Hide()
     SetActive(false);
 }
 
-void Popup::ShowNextMessage()
+void Popup::Update()
 {
-    if (!textMessages.empty())
+    if (messageWait > 0.0f)
     {
-        Font* font = GetService<ResourceController>()->Get<Font>("assets/Orkney Regular.ttf", 36);
-        currentText = textMessages.top();
-        textMessages.pop();
-        currentHighlight = highlightAreas.top();
-        highlightAreas.pop();
-        blockHighlight = blockHighlights.top();
-        blockHighlights.pop();
-        Show();
+        messageWait -= delta.Time();
+        if (messageWait <= 0.0f)
+        {
+            ShowNextMessage();
+        }
+    }
+}
+
+void Popup::ShowNextMessage(float delay)
+{
+    if (delay > 0.0f)
+    {
+        messageWait = delay;
     }
     else
     {
-        Hide();
+        if (!textMessages.empty())
+        {
+            Font* font = GetService<ResourceController>()->Get<Font>("assets/Orkney Regular.ttf", 36);
+            currentText = textMessages.top();
+            textMessages.pop();
+            currentHighlight = highlightAreas.top();
+            highlightAreas.pop();
+            blockHighlight = blockHighlights.top();
+            blockHighlights.pop();
+            if (blockInputs.top())
+            {
+                gui->input->SetActive(false);
+            }
+            else
+            {
+                gui->input->SetActive(true);
+            }
+            blockInputs.pop();
+            Show();
+        }
+        else
+        {
+            Hide();
+        }
     }
 }

@@ -3,6 +3,7 @@
 #include "simulator.h"
 #include "gui.h"
 #include "connection.h"
+#include "popup.h"
 
 using namespace Ossium;
 
@@ -76,6 +77,22 @@ void Server::Simulate(GameSim& sim, GameController& game, int stage)
                         // todo: popup message that hacker has lost control of the server because it is faulty!
                     }
                     status = SERVER_FAULT;
+                    if (game.isTutorial && game.tutorialState == TUTORIAL_AWAIT_FAULT)
+                    {
+                        game.gui->popup->AddMessage("\n\nTo fix a fault, you must use the <b>repair</b> tool. Click the highlighted button on the left to select it.",
+                                                    true,
+                                                    Rect(game.gui->repairButton->GetTransform()->GetWorldPosition().x - 40, game.gui->repairButton->GetTransform()->GetWorldPosition().y - 40, 80, 80)
+                        );
+                        game.gui->popup->AddMessage("\n\nServers have a small chance of developing a fault while connected to the network. The more connections a server has, the more likely it is to have a fault.");
+                        game.gui->popup->AddMessage("\n\nOno! One of your servers have developed a <b>fault</b> (as indicated by the yellow warning icon)!",
+                                                    true,
+                                                    Rect(GetTransform()->GetWorldPosition().x - 12, GetTransform()->GetWorldPosition().y - 12, 24, 24)
+                        );
+                        game.gui->popup->GetTransform()->SetWorldPosition(Vector2(1280 / 2, 100));
+                        game.gui->popup->ShowNextMessage();
+                        game.SetPaused(true);
+                        game.tutorialState = TUTORIAL_FAULT;
+                    }
                     icon->SetSource(GetService<ResourceController>()->Get<Image>("assets/server_fault.png", *GetService<Renderer>(), SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STATIC));
                 }
                 break;

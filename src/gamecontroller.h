@@ -68,6 +68,23 @@ struct GameSchema : public Schema<GameSchema, 20>
 
 };
 
+enum TutorialState
+{
+    TUTORIAL_START = 0,
+    TUTORIAL_PLACE_SERVER_A,
+    TUTORIAL_PLACE_SERVER_B,
+    TUTORIAL_CONNECT_SERVER_A,
+    TUTORIAL_CONNECT_SERVER_B,
+    TUTORIAL_AWAIT_FAULT,
+    TUTORIAL_FAULT,
+    TUTORIAL_AWAIT_HACKERS,
+    TUTORIAL_CUT_A,
+    TUTORIAL_CUT_B,
+    TUTORIAL_PURGE_INDICATE,
+    TUTORIAL_PURGE,
+    TUTORIAL_END
+};
+
 class GameController : Component, GameSchema
 {
 public:
@@ -107,6 +124,12 @@ public:
 
     GameSim* simulator = nullptr;
 
+    bool restart = false;
+
+    bool isTutorial = false;
+
+    int tutorialState = TutorialState::TUTORIAL_START;
+
 private:
     unsigned int closest = 0;
 
@@ -125,8 +148,6 @@ private:
     Tooltip* tooltip = nullptr;
 
     int pauseRequestStack = 0;
-
-    bool isTutorial = false;
 
 };
 

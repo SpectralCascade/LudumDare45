@@ -1,10 +1,11 @@
 # depslib dependency file v1.0
-1587411205 source:c:\users\2013b\git\ludumdare46\src\server.cpp
+1587422146 source:c:\users\2013b\git\ludumdare46\src\server.cpp
 	"server.h"
 	"gamecontroller.h"
 	"simulator.h"
 	"gui.h"
 	"connection.h"
+	"popup.h"
 
 1587399635 c:\users\2013b\git\ludumdare46\src\server.h
 	"Ossium.h"
@@ -477,16 +478,16 @@
 1587166338 c:\users\2013b\git\ossium\engine\src\components\button.h
 	"../Ossium.h"
 
-1587415493 source:c:\users\2013b\git\ludumdare46\src\main.cpp
+1587416758 source:c:\users\2013b\git\ludumdare46\src\main.cpp
 	"Ossium.h"
 	"gamecontroller.h"
 	"menu.h"
 
-1587413139 c:\users\2013b\git\ludumdare46\src\gamecontroller.h
+1587422051 c:\users\2013b\git\ludumdare46\src\gamecontroller.h
 	"Ossium.h"
 	"tooltip.h"
 
-1587413174 source:c:\users\2013b\git\ludumdare46\src\gamecontroller.cpp
+1587421640 source:c:\users\2013b\git\ludumdare46\src\gamecontroller.cpp
 	"gamecontroller.h"
 	"server.h"
 	"gui.h"
@@ -527,12 +528,13 @@
 1587382689 c:\users\2013b\git\ludumdare46\src\tooltip.h
 	"Ossium.h"
 
-1587412743 c:\users\2013b\git\ludumdare46\src\popup.h
+1587418781 c:\users\2013b\git\ludumdare46\src\popup.h
 	"Ossium.h"
 
-1587412784 source:c:\users\2013b\git\ludumdare46\src\popup.cpp
+1587419048 source:c:\users\2013b\git\ludumdare46\src\popup.cpp
 	"popup.h"
 	"gui.h"
+	"gamecontroller.h"
 
 1587415270 source:c:\users\2013b\git\ludumdare46\src\menu.cpp
 	"menu.h"

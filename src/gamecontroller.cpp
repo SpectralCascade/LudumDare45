@@ -50,6 +50,23 @@ void GameController::OnCreate()
                 // TODO clear mouse mode
             }
             mouseMode = PLACE_SERVER;
+
+            if (isTutorial)
+            {
+                if (tutorialState == TUTORIAL_PLACE_SERVER_A)
+                {
+                    gui->popup->AddMessage("\n\nGreat, now you've clicked on the build server button, you can place a server by clicking in an empty spot on the world map (this will automatically snap the server to a pre-defined position).", false, {0,0,0,0}, false);
+                    gui->popup->GetTransform()->SetWorldPosition(Vector2(1280 / 2, 100));
+                    gui->popup->ShowNextMessage();
+                }
+                else if (tutorialState == TUTORIAL_PLACE_SERVER_B)
+                {
+                    gui->popup->AddMessage("\n\nPlace the second server somewhere nearby to the server that we have already placed.", false, {0,0,0,0}, false);
+                    gui->popup->GetTransform()->SetWorldPosition(Vector2(1280 / 2, 100));
+                    gui->popup->ShowNextMessage();
+                }
+            }
+
         }
     };
 
@@ -79,6 +96,16 @@ void GameController::OnCreate()
                 // TODO clear mouse mode
             }
             mouseMode = CONNECT_SERVER_START;
+
+            if (isTutorial)
+            {
+                if (tutorialState == TUTORIAL_CONNECT_SERVER_A)
+                {
+                    gui->popup->AddMessage("\n\nClick on one of the servers in the world map to select it as a candidate for forming a new network connection.", false, {0,0,0,0}, false);
+                    gui->popup->GetTransform()->SetWorldPosition(Vector2(1280 / 2, 100));
+                    gui->popup->ShowNextMessage();
+                }
+            }
         }
         else
         {
@@ -151,6 +178,30 @@ void GameController::OnCreate()
                         {
                             connectee = server;
                             mouseMode = CONNECT_SERVER_END;
+                            if (isTutorial && tutorialState == TUTORIAL_CONNECT_SERVER_A)
+                            {
+                                Server* otherServer = connectee;
+                                for (auto itrServer : servers)
+                                {
+                                    if (connectee != itrServer.second)
+                                    {
+                                        otherServer = itrServer.second;
+                                    }
+                                }
+                                gui->popup->AddMessage("\n\nGreat, now click on the other server (highlighted) to connect them both together.",
+                                                       false,
+                                                       Rect(otherServer->GetTransform()->GetWorldPosition().x - 12, otherServer->GetTransform()->GetWorldPosition().y - 12, 24, 24),
+                                                       false
+                                );
+                                gui->popup->ShowNextMessage();
+                                gui->popup->GetTransform()->SetWorldPosition(Vector2(1280 / 2, 100));
+                                tutorialState = TUTORIAL_CONNECT_SERVER_B;
+                                if (simulator->money < ConnectionCost(connectee, otherServer) + 50)
+                                {
+                                    // give player money if they ain't got enough for the connection
+                                    simulator->money = ConnectionCost(connectee, otherServer) + 50;
+                                }
+                            }
                         }
                         else
                         {
@@ -287,6 +338,30 @@ void GameController::BuildServer(unsigned int pos)
 
     simulator->money -= GameSim::server_cost;
 
+    if (isTutorial)
+    {
+        if (tutorialState == TUTORIAL_PLACE_SERVER_A)
+        {
+            gui->popup->AddMessage("\n\nWe seem to have plenty of money, so why not go ahead and build another server somewhere?");
+            gui->popup->AddMessage("\n\nWhenever you build a server, it'll cost you some money. You can see how much money you have in the bottom left corner.", true, Rect(0, 768 - 80, 250, 80));
+            gui->popup->AddMessage("\n\nGood job! You've successfully created a server, which will be up and running soon.");
+            gui->popup->ShowNextMessage();
+            gui->popup->GetTransform()->SetWorldPosition(Vector2(1280 / 2, 768 / 2));
+            tutorialState = TUTORIAL_PLACE_SERVER_B;
+        }
+        else if (tutorialState == TUTORIAL_PLACE_SERVER_B)
+        {
+            gui->popup->AddMessage("\n\nAwesome! Now we have more than one server on the world map, we can <b>form a network</b> by clicking on the highlighted <b>connector</b> button.",
+                                   true,
+                                   Rect(gui->connectorButton->GetTransform()->GetWorldPosition().x - 40, gui->connectorButton->GetTransform()->GetWorldPosition().y - 40, 80, 80),
+                                   false
+            );
+            gui->popup->ShowNextMessage();
+            gui->popup->GetTransform()->SetWorldPosition(Vector2(1280 / 2, 768 / 2));
+            tutorialState = TUTORIAL_CONNECT_SERVER_A;
+        }
+    }
+
 }
 
 void GameController::PurgeServer(Server* server)
@@ -369,6 +444,20 @@ void GameController::ConnectServers(Server* first, Server* second)
         first->connections.push_back(connection);
         second->connections.push_back(connection);
         simulator->money -= cost;
+
+        if (isTutorial && tutorialState == TUTORIAL_CONNECT_SERVER_B)
+        {
+            gui->popup->AddMessage("\n\nTo win the game, you must have at least 20 servers placed in the world map, all of which must have at least 2 connections.");
+            gui->popup->AddMessage("\n\nFantastic, you've formed a server network! Every connection in a server network generates a random amount of money each day as people pay you for using your network.");
+            gui->popup->GetTransform()->SetWorldPosition(Vector2(1280 / 2, 768 / 2));
+            gui->popup->ShowNextMessage();
+            tutorialState = TUTORIAL_AWAIT_FAULT;
+        }
+    }
+
+    if (isTutorial && tutorialState == TUTORIAL_CONNECT_SERVER_B)
+    {
+        tutorialState = TUTORIAL_CONNECT_SERVER_A;
     }
     // cancel sound
 }
@@ -444,6 +533,7 @@ void GameController::Update()
                 }
             }
         }
+
         if (mousePos.Distance(closestVec) < 90)
         {
             mouseIcon->GetTransform()->SetWorldPosition(closestVec);
@@ -517,7 +607,9 @@ void GameController::Update()
 void GameController::ActivateTutorial()
 {
     isTutorial = true;
-    gui->popup->AddMessage("<b>Welcome to SPOF: Single Point Of Failure!</b>\n\nIn this game, you are responsible for creating and keeping a world-wide network alive. But watch out! Server faults and malicious hackers seek to destroy your network. You must do whatever it takes to spread your servers all over the world without the network collapsing.");
+    gui->popup->AddMessage("\n\nWe'll have to bring our network to life from scratch, so let's build a server somewhere. You can do this by clicking on the highlighted button.", true, Rect(gui->buildServerButton->GetTransform()->GetWorldPosition().x - 40, gui->buildServerButton->GetTransform()->GetWorldPosition().y - 40, 80, 80));
+    gui->popup->AddMessage("<b>Welcome to SPOF: Single Point Of Failure!</b>\n\nIn this game, you are responsible for creating and keeping a world-wide network alive. But watch out! Server faults and malicious hackers seek to destroy your network. You must do whatever it takes to spread your servers all over the world without the network collapsing.\n(Click anywhere to continue)");
     gui->popup->ShowNextMessage();
+    tutorialState = TUTORIAL_PLACE_SERVER_A;
     SetPaused(true);
 }
