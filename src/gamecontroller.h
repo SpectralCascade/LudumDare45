@@ -124,6 +124,8 @@ private:
 
     int pauseRequestStack = 0;
 
+    bool isTutorial = true;
+
 };
 
 #endif // GAMECONTROLLER_H

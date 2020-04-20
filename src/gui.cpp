@@ -1,6 +1,7 @@
 #include "gui.h"
 #include "gamecontroller.h"
 #include "simulator.h"
+#include "popup.h"
 
 using namespace Ossium;
 
@@ -87,6 +88,28 @@ void GUI::OnCreate()
 
     SetRenderLayer(80);
 
+    popup = entity->AddComponent<Popup>();
+
+}
+
+void GUI::Highlight(Rect area, SDL_Color color)
+{
+    Rect top, bottom, left, right;
+    top = Rect(0, 0, 1280, area.y);
+    bottom = Rect(0, area.y + area.h, 1280, 768 - (area.y + area.h));
+    left = Rect(0, top.h, area.x, bottom.y - top.h);
+    right = Rect(area.x + area.w, top.h, 1280 - (area.x + area.w), bottom.y - top.h);
+
+    Renderer& renderer = *GetService<Renderer>();
+
+    SDL_Color blockColor = Color(0, 0, 0, 140);
+
+    top.DrawFilled(renderer, blockColor);
+    bottom.DrawFilled(renderer, blockColor);
+    left.DrawFilled(renderer, blockColor);
+    right.DrawFilled(renderer, blockColor);
+
+    area.Draw(renderer, color);
 }
 
 void GUI::Render(Renderer& renderer)

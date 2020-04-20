@@ -31,6 +31,8 @@ struct ServerSchema : public Schema<ServerSchema, 20>
 
     M(unsigned int, daysSinceFault) = 0;
 
+    M(unsigned int, daysSinceHack) = 0;
+
     M(unsigned int, serverId);
 
 };

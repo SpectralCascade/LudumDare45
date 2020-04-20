@@ -4,6 +4,7 @@
 #include "simulator.h"
 #include "connection.h"
 #include "tooltip.h"
+#include "popup.h"
 
 using namespace Ossium;
 
@@ -30,6 +31,7 @@ void GameController::OnCreate()
     gui = entity->AddComponent<GUI>();
     gui->game = this;
     GetService<InputController>()->AddContext("GUI", gui->input);
+    gui->popup->Init(gui, global_game->GetService<InputController>());
 
     mouseIcon = entity->CreateChild()->AddComponent<Texture>();
     mouseIcon->SetRenderLayer(90);
@@ -247,6 +249,9 @@ void GameController::OnCreate()
         servers.push_back(server);
     }*/
 
+    gui->popup->AddMessage("<b>Welcome to SPOF: Single Point Of Failure!</b>\nIn this game, you are responsible for creating and keeping a world-wide network alive. But watch out! Server faults and malicious hackers seek to destroy your network. You must do whatever it takes to spread your servers all over the world without the network collapsing.");
+    gui->popup->ShowNextMessage();
+
 }
 
 void GameController::SetPaused(bool paused)
@@ -353,7 +358,8 @@ void GameController::RepairServer(Vector2 pos)
 
 int GameController::ConnectionCost(Server* a, Server* b)
 {
-    return 10;
+    float distance = a->GetTransform()->GetWorldPosition().Distance(b->GetTransform()->GetWorldPosition());
+    return max(10, (int)distance - 60);
 }
 
 void GameController::ConnectServers(Server* first, Server* second)

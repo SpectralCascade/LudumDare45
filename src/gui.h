@@ -6,6 +6,7 @@
 using namespace Ossium;
 
 class GameController;
+class Popup;
 
 class GUI : public GraphicComponent
 {
@@ -29,6 +30,10 @@ public:
     Button* purgeButton = nullptr;
 
     Button* pauseButton = nullptr;
+
+    Popup* popup;
+
+    void Highlight(Rect area, SDL_Color color = Colors::YELLOW);
 
     TextLayout moneyText;
 

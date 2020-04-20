@@ -43,22 +43,26 @@ void Server::Simulate(GameSim& sim, GameController& game, int stage)
             }
             case SERVER_HACKED:
             {
-                if (rng.Float() < 0.1f * connections.size())
+                if (rng.Float() < 0.05f * connections.size())
                 {
                     Connection* connection = connections[rng.Int(0, connections.size() - 1)];
                     Server* target = connection->server_a == this ? connection->server_b : connection->server_a;
                     target->status = SERVER_HACKED;
                 }
+                health -= 0.01f;
             }
             case SERVER_RUNNING:
             {
                 daysSinceFault++;
+                daysSinceHack++;
 
                 // Chance of a fault is increased as connections increase
                 float fault_chance = ((status == SERVER_HACKED ? 0.02f : 0.01f) * (float)connections.size());
 
-                if (!connections.empty() && sim.daysSinceHackers > sim.hackerInterval && rng.Float() < 0.001f)
+                if (!connections.empty() && sim.daysSinceHackers > sim.hackerInterval && daysSinceHack > 80 && rng.Float() < 0.001f * global_game->servers.size())
                 {
+                    daysSinceHack = 0;
+                    sim.daysSinceHackers = sim.hackerInterval / 3;
                     status = SERVER_HACKED;
                     break;
                 }
