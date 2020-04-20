@@ -18,6 +18,7 @@ REGISTER_COMPONENT(GameSim);
 void GameSim::UpdateSim(GameController& game)
 {
     timeStep++;
+    daysSinceHackers++;
     vector<Automaton*> automatons = entity->GetComponentsInChildren<Automaton>();
     for (Automaton* automaton : automatons)
     {

@@ -2,7 +2,7 @@
 #include "gamecontroller.h"
 #include "simulator.h"
 #include "gui.h"
-#include"connection.h"
+#include "connection.h"
 
 using namespace Ossium;
 
@@ -41,18 +41,36 @@ void Server::Simulate(GameSim& sim, GameController& game, int stage)
                 }
                 break;
             }
+            case SERVER_HACKED:
+            {
+                if (rng.Float() < 0.1f * connections.size())
+                {
+                    Connection* connection = connections[rng.Int(0, connections.size() - 1)];
+                    Server* target = connection->server_a == this ? connection->server_b : connection->server_a;
+                    target->status = SERVER_HACKED;
+                }
+            }
             case SERVER_RUNNING:
             {
-
                 daysSinceFault++;
 
-                icon->SetSource(nullptr);
-
                 // Chance of a fault is increased as connections increase
-                float fault_chance = (0.01f * (float)connections.size());
+                float fault_chance = ((status == SERVER_HACKED ? 0.02f : 0.01f) * (float)connections.size());
+
+                if (!connections.empty() && sim.daysSinceHackers > sim.hackerInterval && rng.Float() < 0.001f)
+                {
+                    status = SERVER_HACKED;
+                    break;
+                }
+
+                icon->SetSource(status == SERVER_HACKED ? GetService<ResourceController>()->Get<Image>("assets/server_hacked.png", *GetService<Renderer>(), SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STATIC) : nullptr);
 
                 if (daysSinceFault > 22 && rng.Float() < fault_chance)
                 {
+                    if (status == SERVER_HACKED)
+                    {
+                        // todo: popup message that hacker has lost control of the server because it is faulty!
+                    }
                     status = SERVER_FAULT;
                     icon->SetSource(GetService<ResourceController>()->Get<Image>("assets/server_fault.png", *GetService<Renderer>(), SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STATIC));
                 }
@@ -125,10 +143,16 @@ void Server::Simulate(GameSim& sim, GameController& game, int stage)
                     sim.money += rng.Int(0, 3);
                 }
 
-                sim.money -= 1;
 
             }
 
+        }
+        else if (status == SERVER_HACKED)
+        {
+            for (Connection* connection : connections)
+            {
+                sim.money -= 1;
+            }
         }
     }
 
@@ -176,6 +200,8 @@ string Server::GetStatusText()
         return "Faulty";
     case SERVER_REPAIRING:
         return "Repairing";
+    case SERVER_HACKED:
+        return "Hacked!";
     }
     return "Unknown";
 }

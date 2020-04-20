@@ -13,7 +13,8 @@ enum ServerState
     SERVER_BUILDING = 0,
     SERVER_RUNNING = 1,
     SERVER_REPAIRING = 2,
-    SERVER_FAULT = 4
+    SERVER_FAULT = 4,
+    SERVER_HACKED = 8
 };
 
 struct ServerSchema : public Schema<ServerSchema, 20>

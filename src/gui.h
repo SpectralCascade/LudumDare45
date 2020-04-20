@@ -24,6 +24,10 @@ public:
 
     Button* connectorButton = nullptr;
 
+    Button* cutConnectionButton = nullptr;
+
+    Button* purgeButton = nullptr;
+
     Button* pauseButton = nullptr;
 
     TextLayout moneyText;

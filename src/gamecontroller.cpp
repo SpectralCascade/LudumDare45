@@ -83,6 +83,22 @@ void GameController::OnCreate()
         }
     };
 
+    gui->purgeButton->OnClicked += [&] (const Button& caller) {
+        if (true)
+        {
+            SetPaused(true);
+            mouseIcon->SetSource(GetService<ResourceController>()->Get<Image>("assets/purge_icon.png", *GetService<Renderer>(), SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STATIC));
+            if (mouseMode != NONE)
+            {
+                // TODO clear mouse mode
+            }
+            mouseMode = PURGE_SERVER;
+        }
+        else
+        {
+        }
+    };
+
     MouseHandler* mouse = gui->input->GetHandler<MouseHandler>();
     mouse->AddAction(
         "GUI_click",
@@ -134,6 +150,21 @@ void GameController::OnCreate()
                         }
                         mouseMode = NONE;
                         connectee = nullptr;
+                        mouseIcon->SetSource(nullptr);
+                        break;
+                    }
+                    case PURGE_SERVER:
+                    {
+                        Server* server = FindServer(Vector2(data.x, data.y));
+                        if (server != nullptr)
+                        {
+                            PurgeServer(server);
+                        }
+                        else
+                        {
+                            // flash cancel
+                        }
+                        mouseMode = NONE;
                         mouseIcon->SetSource(nullptr);
                         break;
                     }
@@ -192,6 +223,24 @@ void GameController::BuildServer(unsigned int pos)
 
     simulator->money -= GameSim::server_cost;
 
+}
+
+void GameController::PurgeServer(Server* server)
+{
+    if (server->status == SERVER_HACKED)
+    {
+        if (simulator->money < GameSim::purge_cost)
+        {
+            // Show error
+            return;
+        }
+
+        simulator->money -= GameSim::purge_cost;
+
+        server->status = SERVER_RUNNING;
+        server->daysSinceFault = 10;
+        // todo: sound effect etc.
+    }
 }
 
 Server* GameController::FindServer(Vector2 pos)
@@ -286,7 +335,7 @@ void GameController::Update()
         mouseIcon->GetTransform()->SetWorldPosition(closestVec);
         InfoMessage(Utilities::Format("Server Cost: {0}", GameSim::server_cost));
     }
-    else if (mouseMode == REPAIR_SERVER || mouseMode == CONNECT_SERVER_START || mouseMode == CONNECT_SERVER_END)
+    else if (mouseMode != MouseInteraction::NONE)
     {
         mouseIcon->GetTransform()->SetWorldPosition(mousePos);
         if (mouseMode == REPAIR_SERVER)
@@ -304,6 +353,10 @@ void GameController::Update()
             {
                 tooltip->Hide();
             }
+        }
+        else if (mouseMode == PURGE_SERVER)
+        {
+            InfoMessage(Utilities::Format("Purge Cost: {0}", GameSim::purge_cost));
         }
     }
     else

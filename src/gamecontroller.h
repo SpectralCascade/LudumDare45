@@ -23,7 +23,10 @@ enum MouseInteraction
     PLACE_SERVER,
     REPAIR_SERVER,
     CONNECT_SERVER_START,
-    CONNECT_SERVER_END
+    CONNECT_SERVER_END,
+    PURGE_SERVER,
+    CUT_CONNECTOR_START,
+    CUT_CONNECTOR
 };
 
 struct GameSchema : public Schema<GameSchema, 20>
@@ -89,6 +92,8 @@ public:
     Server* FindServer(Vector2 pos);
 
     void InfoMessage(string text);
+
+    void PurgeServer(Server* server);
 
     GUI* gui = nullptr;
 

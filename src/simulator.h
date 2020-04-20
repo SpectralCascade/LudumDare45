@@ -33,11 +33,17 @@ public:
 //  GAME LOGIC VARIABLES
 //
 
-    int money = 10000;//145;
+    int daysSinceHackers = 0;
 
-    inline static const int server_cost = 50;
+    inline static const int hackerInterval = 100;
 
-    inline static const int repairs_cost = 15;
+    int money = 550;
+
+    inline static const int purge_cost = 500;
+
+    inline static const int server_cost = 200;
+
+    inline static const int repairs_cost = 50;
 
 private:
     unsigned int timeStep = 0;
