@@ -26,7 +26,7 @@ enum MouseInteraction
     CONNECT_SERVER_END,
     PURGE_SERVER,
     CUT_CONNECTOR_START,
-    CUT_CONNECTOR
+    CUT_CONNECTOR_END
 };
 
 struct GameSchema : public Schema<GameSchema, 20>
@@ -84,6 +84,8 @@ public:
 
     void ConnectServers(Server* first, Server* second);
 
+    void CutServers(Server* first, Server* second);
+
     void SetPaused(bool paused);
 
     // Returns the cost of a connection to another server
@@ -119,6 +121,8 @@ private:
     Entity* connections_entity = nullptr;
 
     Tooltip* tooltip = nullptr;
+
+    int pauseRequestStack = 0;
 
 };
 

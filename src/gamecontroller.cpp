@@ -99,6 +99,22 @@ void GameController::OnCreate()
         }
     };
 
+    gui->cutConnectionButton->OnClicked += [&] (const Button& caller) {
+        if (true)
+        {
+            SetPaused(true);
+            mouseIcon->SetSource(GetService<ResourceController>()->Get<Image>("assets/cut_icon.png", *GetService<Renderer>(), SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STATIC));
+            if (mouseMode != NONE)
+            {
+                // TODO clear mouse mode
+            }
+            mouseMode = CUT_CONNECTOR_START;
+        }
+        else
+        {
+        }
+    };
+
     MouseHandler* mouse = gui->input->GetHandler<MouseHandler>();
     mouse->AddAction(
         "GUI_click",
@@ -134,6 +150,7 @@ void GameController::OnCreate()
                             // flash cancel
                             mouseMode = NONE;
                             mouseIcon->SetSource(nullptr);
+                            SetPaused(false);
                         }
                         break;
                     }
@@ -143,6 +160,39 @@ void GameController::OnCreate()
                         if (server != nullptr)
                         {
                             ConnectServers(connectee, server);
+                        }
+                        else
+                        {
+                            // flash cancel
+                        }
+                        mouseMode = NONE;
+                        connectee = nullptr;
+                        mouseIcon->SetSource(nullptr);
+                        break;
+                    }
+                    case CUT_CONNECTOR_START:
+                    {
+                        Server* server = FindServer(Vector2(data.x, data.y));
+                        if (server != nullptr)
+                        {
+                            connectee = server;
+                            mouseMode = CUT_CONNECTOR_END;
+                        }
+                        else
+                        {
+                            // flash cancel
+                            mouseMode = NONE;
+                            mouseIcon->SetSource(nullptr);
+                            SetPaused(false);
+                        }
+                        break;
+                    }
+                    case CUT_CONNECTOR_END:
+                    {
+                        Server* server = FindServer(Vector2(data.x, data.y));
+                        if (server != nullptr)
+                        {
+                            CutServers(connectee, server);
                         }
                         else
                         {
@@ -193,8 +243,24 @@ void GameController::OnCreate()
 
 void GameController::SetPaused(bool paused)
 {
-    gui->pauseButton->sprite->ChangeState(paused ? "play" : "pause");
-    clock.SetPaused(paused);
+    if (paused)
+    {
+        pauseRequestStack++;
+    }
+    else
+    {
+        pauseRequestStack = pauseRequestStack > 0 ? pauseRequestStack - 1 : 0;
+    }
+    if (pauseRequestStack == 0)
+    {
+        gui->pauseButton->sprite->ChangeState("pause");
+        clock.SetPaused(false);
+    }
+    else
+    {
+        gui->pauseButton->sprite->ChangeState("play");
+        clock.SetPaused(true);
+    }
 }
 
 void GameController::BuildServer(unsigned int pos)
@@ -227,6 +293,8 @@ void GameController::BuildServer(unsigned int pos)
 
 void GameController::PurgeServer(Server* server)
 {
+    SetPaused(false);
+
     if (server->status == SERVER_HACKED)
     {
         if (simulator->money < GameSim::purge_cost)
@@ -286,6 +354,8 @@ int GameController::ConnectionCost(Server* a, Server* b)
 
 void GameController::ConnectServers(Server* first, Server* second)
 {
+    SetPaused(false);
+
     int cost = ConnectionCost(first, second);
     if (simulator->money < cost)
     {
@@ -308,6 +378,54 @@ void GameController::ConnectServers(Server* first, Server* second)
         simulator->money -= cost;
     }
     // cancel sound
+}
+
+void GameController::CutServers(Server* first, Server* second)
+{
+    SetPaused(false);
+
+    if (first != second)
+    {
+
+
+        Connection* connection = nullptr;
+        for (auto connector : first->connections)
+        {
+            if (connector->server_a == second || connector->server_b == second)
+            {
+                connection = connector;
+                break;
+            }
+        }
+
+        if (connection != nullptr)
+        {
+            // Destroy the connection and remove it from both servers
+            for (auto itr = first->connections.begin(); itr < first->connections.end(); itr++)
+            {
+                if (*itr == connection)
+                {
+                    first->connections.erase(itr);
+                    break;
+                }
+            }
+            for (auto itr = second->connections.begin(); itr < second->connections.end(); itr++)
+            {
+                if (*itr == connection)
+                {
+                    second->connections.erase(itr);
+                    break;
+                }
+            }
+
+            connection->GetEntity()->Destroy();
+
+        }
+        else
+        {
+            // error sound etc.
+        }
+    }
 }
 
 void GameController::InfoMessage(string text)

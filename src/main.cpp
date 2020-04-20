@@ -31,7 +31,7 @@ int main(int argc, char* argv[])
     background->SetSource(&bg);
     background->GetTransform()->SetWorldPosition(Vector2(1280 / 2, 768 / 2));
 
-    renderer.SetBackgroundColor(Colors::GREEN);
+    renderer.SetBackgroundColor(Color(0, 200, 0));
 
     engine.GetScene()->CreateEntity()->AddComponent<GameController>();
 //    engine.GetScene()->CreateEntity()->AddComponent<Server>()->GetTransform()->SetWorldPosition();
