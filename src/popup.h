@@ -39,6 +39,8 @@ private:
 
     Rect box;
 
+    string currentText;
+
     Rect currentHighlight = {0, 0, 0, 0};
 
 };

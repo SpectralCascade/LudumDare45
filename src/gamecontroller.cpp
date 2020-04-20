@@ -249,8 +249,10 @@ void GameController::OnCreate()
         servers.push_back(server);
     }*/
 
-    gui->popup->AddMessage("<b>Welcome to SPOF: Single Point Of Failure!</b>\nIn this game, you are responsible for creating and keeping a world-wide network alive. But watch out! Server faults and malicious hackers seek to destroy your network. You must do whatever it takes to spread your servers all over the world without the network collapsing.");
+    gui->popup->AddMessage("<b>Welcome to SPOF: Single Point Of Failure!</b>\n\nIn this game, you are responsible for creating and keeping a world-wide network alive. But watch out! Server faults and malicious hackers seek to destroy your network. You must do whatever it takes to spread your servers all over the world without the network collapsing.");
     gui->popup->ShowNextMessage();
+
+    SetPaused(true);
 
 }
 

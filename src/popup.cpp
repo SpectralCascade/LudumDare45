@@ -43,6 +43,8 @@ void Popup::Render(Renderer& renderer)
         box.DrawFilled(renderer, Colors::CYAN);
         box.Draw(renderer, Colors::WHITE);
 
+        layout.SetText(renderer, *font, currentText, true);
+        layout.Update(*font);
         layout.Render(renderer, *font, Vector2(box.x + 2, box.y + 2));
     }
 }
@@ -72,8 +74,7 @@ void Popup::ShowNextMessage()
     if (!textMessages.empty())
     {
         Font* font = GetService<ResourceController>()->Get<Font>("assets/Orkney Regular.ttf", 36);
-        layout.SetText(*GetService<Renderer>(), *font, textMessages.top(), true);
-        layout.Update(*font);
+        currentText = textMessages.top();
         textMessages.pop();
         currentHighlight = highlightAreas.top();
         highlightAreas.pop();
