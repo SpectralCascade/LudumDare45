@@ -2,6 +2,7 @@
 #define GAMECONTROLLER_H
 
 #include "Ossium.h"
+#include "tooltip.h"
 
 using namespace Ossium;
 
@@ -85,9 +86,9 @@ public:
     // Returns the cost of a connection to another server
     int ConnectionCost(Server* a, Server* b);
 
-    void Tooltip(string text, Vector2 position);
-
     Server* FindServer(Vector2 pos);
+
+    void InfoMessage(string text);
 
     GUI* gui = nullptr;
 
@@ -111,6 +112,8 @@ private:
     Server* connectee = nullptr;
 
     Entity* connections_entity = nullptr;
+
+    Tooltip* tooltip = nullptr;
 
 };
 

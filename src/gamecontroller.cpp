@@ -3,6 +3,7 @@
 #include "gui.h"
 #include "simulator.h"
 #include "connection.h"
+#include "tooltip.h"
 
 using namespace Ossium;
 
@@ -22,6 +23,9 @@ void GameController::OnCreate()
 
     global_game = this;
     simulator = entity->AddComponent<GameSim>();
+
+    tooltip = entity->CreateChild()->AddComponent<Tooltip>();
+    tooltip->GetTransform()->SetWorldPosition(Vector2(1280 / 2, 60));
 
     gui = entity->AddComponent<GUI>();
     gui->game = this;
@@ -166,7 +170,7 @@ void GameController::BuildServer(unsigned int pos)
 {
     SetPaused(false);
 
-    if (simulator->money < 50)
+    if (simulator->money < GameSim::server_cost)
     {
         // Show error
         return;
@@ -186,7 +190,7 @@ void GameController::BuildServer(unsigned int pos)
     servers[pos]->GetTransform()->SetWorldPosition(grid[pos]);
     servers[pos]->serverId = pos;
 
-    simulator->money -= 50;
+    simulator->money -= GameSim::server_cost;
 
 }
 
@@ -211,9 +215,9 @@ void GameController::RepairServer(Vector2 pos)
     {
         if (server->status == SERVER_FAULT)
         {
-            if (simulator->money >= 15)
+            if (simulator->money >= GameSim::repairs_cost)
             {
-                simulator->money -= 15;
+                simulator->money -= GameSim::repairs_cost;
                 server->status = ServerState::SERVER_REPAIRING;
             }
             else
@@ -226,14 +230,15 @@ void GameController::RepairServer(Vector2 pos)
     // TODO: cancel noise
 }
 
-int ConnectionCost(Server* a, Server* b)
+int GameController::ConnectionCost(Server* a, Server* b)
 {
-    return 10 + (a->GetTransform()->GetWorldPosition().Distance(b->GetTransform()->GetWorldPosition() * 0.2f));
+    return 10;
 }
 
 void GameController::ConnectServers(Server* first, Server* second)
 {
-    if (simulator->money < ConnectionCost(first, second))
+    int cost = ConnectionCost(first, second);
+    if (simulator->money < cost)
     {
         // Money not enough
         return;
@@ -251,8 +256,15 @@ void GameController::ConnectServers(Server* first, Server* second)
         connection->Init(first, second);
         first->connections.push_back(connection);
         second->connections.push_back(connection);
+        simulator->money -= cost;
     }
     // cancel sound
+}
+
+void GameController::InfoMessage(string text)
+{
+    tooltip->SetText(text);
+    tooltip->Show();
 }
 
 void GameController::Update()
@@ -272,10 +284,31 @@ void GameController::Update()
             }
         }
         mouseIcon->GetTransform()->SetWorldPosition(closestVec);
+        InfoMessage(Utilities::Format("Server Cost: {0}", GameSim::server_cost));
     }
     else if (mouseMode == REPAIR_SERVER || mouseMode == CONNECT_SERVER_START || mouseMode == CONNECT_SERVER_END)
     {
         mouseIcon->GetTransform()->SetWorldPosition(mousePos);
+        if (mouseMode == REPAIR_SERVER)
+        {
+            InfoMessage(Utilities::Format("Repairs Cost: {0}", GameSim::repairs_cost));
+        }
+        else if (mouseMode == CONNECT_SERVER_END)
+        {
+            Server* target = FindServer(mousePos);
+            if (target != nullptr)
+            {
+                InfoMessage(Utilities::Format("Connection Cost: {0}", ConnectionCost(connectee, target)));
+            }
+            else
+            {
+                tooltip->Hide();
+            }
+        }
+    }
+    else
+    {
+        tooltip->Hide();
     }
     mouseIcon->SetRenderWidth(2);
     mouseIcon->SetRenderHeight(2);

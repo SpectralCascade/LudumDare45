@@ -23,7 +23,7 @@ void Server::OnCreate()
 
 void Server::Simulate(GameSim& sim, GameController& game, int stage)
 {
-    if (stage == 0)
+    if (stage == 1)
     {
         switch (status)
         {
@@ -49,9 +49,7 @@ void Server::Simulate(GameSim& sim, GameController& game, int stage)
                 icon->SetSource(nullptr);
 
                 // Chance of a fault is increased as connections increase
-                float fault_chance = (0.001f * (float)connections.size());
-
-                sim.money--;
+                float fault_chance = (0.01f * (float)connections.size());
 
                 if (daysSinceFault > 22 && rng.Float() < fault_chance)
                 {
@@ -89,6 +87,48 @@ void Server::Simulate(GameSim& sim, GameController& game, int stage)
 
             entity->GetComponentInChildren<Texture>()->GetEntity()->Destroy();
             entity->Destroy();
+
+            //Log.Info("Total connections = {0}", connections.size());
+
+            // Clean up connections
+            for (auto connection : connections)
+            {
+                if (connection != nullptr)
+                {
+                    // Destroy the connection
+                    //Log.Info("Attempting to destroy a connection: {0}", connection->GetEntity()->name);
+                    connection->GetEntity()->Destroy();
+
+                    Server* otherServer = connection->server_a == this ? connection->server_b : connection->server_a;
+                    for (auto itr = otherServer->connections.begin(); itr != otherServer->connections.end(); itr++)
+                    {
+                        if (connection == *itr)
+                        {
+                            otherServer->connections.erase(itr);
+                            break;
+                        }
+                    }
+                }
+            }
+            connections.clear();
+        }
+    }
+    else if (stage == 0)
+    {
+        if (status == SERVER_RUNNING)
+        {
+            for (Connection* connection : connections)
+            {
+
+                if (connection->server_a->status & SERVER_RUNNING && connection->server_b->status & SERVER_RUNNING)
+                {
+                    sim.money += rng.Int(0, 3);
+                }
+
+                sim.money -= 1;
+
+            }
+
         }
     }
 
@@ -96,26 +136,6 @@ void Server::Simulate(GameSim& sim, GameController& game, int stage)
 
 void Server::OnDestroy()
 {
-    // Clean up connections
-    for (auto connection : connections)
-    {
-        if (connection != nullptr)
-        {
-            Server* otherServer = connection->server_a == this ? connection->server_b : connection->server_a;
-            for (auto itr = otherServer->connections.begin(); itr != otherServer->connections.end(); itr++)
-            {
-                if (connection == *itr)
-                {
-                    otherServer->connections.erase(itr);
-                    break;
-                }
-            }
-            // Destroy the connection immediately
-            connection->GetEntity()->Destroy(true);
-            break;
-        }
-    }
-
     Automaton::OnDestroy();
 }
 

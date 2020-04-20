@@ -31,6 +31,8 @@ public:
 
     void Simulate(GameSim& sim, GameController& game, int stage);
 
+    void OnDestroy();
+
 };
 
 

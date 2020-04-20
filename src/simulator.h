@@ -33,7 +33,11 @@ public:
 //  GAME LOGIC VARIABLES
 //
 
-    int money = 145;
+    int money = 10000;//145;
+
+    inline static const int server_cost = 50;
+
+    inline static const int repairs_cost = 15;
 
 private:
     unsigned int timeStep = 0;

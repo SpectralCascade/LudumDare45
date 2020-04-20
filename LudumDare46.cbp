@@ -87,6 +87,8 @@
 		<Unit filename="src/server.h" />
 		<Unit filename="src/simulator.cpp" />
 		<Unit filename="src/simulator.h" />
+		<Unit filename="src/tooltip.cpp" />
+		<Unit filename="src/tooltip.h" />
 		<Extensions>
 			<code_completion />
 			<envvars />
