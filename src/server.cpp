@@ -65,6 +65,23 @@ void Server::Simulate(GameSim& sim, GameController& game, int stage)
                     daysSinceHack = 0;
                     sim.daysSinceHackers = sim.hackerInterval / 3;
                     status = SERVER_HACKED;
+                    if (game.isTutorial && game.tutorialState == TUTORIAL_AWAIT_HACKERS)
+                    {
+                        game.gui->popup->AddMessage("\n\nCutting connections between servers works in a similar way to forming new connections. To begin, select the cutting tool (see highlighted on the left).",
+                                                    true,
+                                                    Rect(game.gui->cutConnectionButton->GetTransform()->GetWorldPosition().x - 40, game.gui->cutConnectionButton->GetTransform()->GetWorldPosition().y - 40, 80, 80)
+                        );
+                        game.gui->popup->AddMessage("\n\nThe best way to deal with hackers is to isolate them by cutting connections to infected servers, then purging them (see the fire button on the left) when you can afford it.");
+                        game.gui->popup->AddMessage("\n\nHackers are rare, but can cause massive damage to your server network. Hackers can easily spread from server to server in your network, so you must eliminate them as soon as they appear before it's too late!");
+                        game.gui->popup->AddMessage("\n\nUh oh! One of your servers has been taken over by <b>hackers</b> (as indicated by the red warning icon)!",
+                                                    true,
+                                                    Rect(GetTransform()->GetWorldPosition().x - 22, GetTransform()->GetWorldPosition().y - 22, 44, 44)
+                        );
+                        game.gui->popup->GetTransform()->SetWorldPosition(Vector2(1280 / 2, 100));
+                        game.gui->popup->ShowNextMessage();
+                        game.SetPaused(true);
+                        game.tutorialState = TUTORIAL_CUT_A;
+                    }
                     break;
                 }
 

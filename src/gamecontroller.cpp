@@ -148,6 +148,13 @@ void GameController::OnCreate()
                 // TODO clear mouse mode
             }
             mouseMode = CUT_CONNECTOR_START;
+
+            if (isTutorial && tutorialState == TUTORIAL_CUT_A)
+            {
+                gui->popup->AddMessage("\n\nClick on the server infected with hackers to begin a connection cutting operation.", false, {0,0,0,0}, false);
+                gui->popup->GetTransform()->SetWorldPosition(Vector2(1280 / 2, 100));
+                gui->popup->ShowNextMessage();
+            }
         }
         else
         {
@@ -246,6 +253,23 @@ void GameController::OnCreate()
                         {
                             connectee = server;
                             mouseMode = CUT_CONNECTOR_END;
+                            if (isTutorial && tutorialState == TUTORIAL_CUT_A)
+                            {
+                                Server* otherServer = connectee;
+                                for (auto itrServer : connectee->connections)
+                                {
+                                    otherServer = itrServer->server_a != connectee ? itrServer->server_a : itrServer->server_b;
+                                    break;
+                                }
+                                gui->popup->AddMessage("\n\nGreat, now click on the other server (highlighted) to cut it's connection.",
+                                                       false,
+                                                       Rect(otherServer->GetTransform()->GetWorldPosition().x - 22, otherServer->GetTransform()->GetWorldPosition().y - 22, 44, 44),
+                                                       false
+                                );
+                                gui->popup->ShowNextMessage();
+                                gui->popup->GetTransform()->SetWorldPosition(Vector2(1280 / 2, 100));
+                                tutorialState = TUTORIAL_CUT_B;
+                            }
                         }
                         else
                         {
@@ -521,9 +545,28 @@ void GameController::CutServers(Server* first, Server* second)
 
             connection->GetEntity()->Destroy();
 
+            if (isTutorial && tutorialState == TUTORIAL_CUT_B)
+            {
+                gui->popup->AddMessage("And that's that! Go ahead and see if you can win. Remember, you must have at least 20 servers which each have at least 2 connections to win. Good luck!");
+                gui->popup->AddMessage("You can use the purge tool in exactly the same way as you would use the repair tool, but it costs considerably more to use.");
+                gui->popup->AddMessage("\n\nFinally, you can use the purge tool (see highlighted button on the left) to purge a server of a hacker attack. The only other ways for a server to become uninfected is for a server fault to occur or the server is destroyed by the hackers.",
+                                   true,
+                                   Rect(gui->purgeButton->GetTransform()->GetWorldPosition().x - 40, gui->purgeButton->GetTransform()->GetWorldPosition().y - 40, 80, 80)
+                );
+                gui->popup->AddMessage("\n\nYou should cut off all other servers connected to an infected server to prevent the spread of hackers.");
+                gui->popup->AddMessage("\n\nAwesome! Now the hackers cannot directly spread to the server and take direct control of it.");
+                gui->popup->GetTransform()->SetWorldPosition(Vector2(1280 / 2, 768 / 2));
+                gui->popup->ShowNextMessage();
+                tutorialState = TUTORIAL_END;
+            }
+
         }
         else
         {
+            if (isTutorial && tutorialState == TUTORIAL_CUT_B)
+            {
+                tutorialState = TUTORIAL_CUT_A;
+            }
             // error sound etc.
         }
     }
