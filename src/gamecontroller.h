@@ -85,7 +85,7 @@ enum TutorialState
     TUTORIAL_END
 };
 
-class GameController : Component, GameSchema
+class GameController : public Component, public GameSchema
 {
 public:
     CONSTRUCT_SCHEMA(Component, GameSchema);

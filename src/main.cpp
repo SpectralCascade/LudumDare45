@@ -32,10 +32,6 @@ int main(int argc, char* argv[])
     bool quit = false;
     while (!quit)
     {
-        resources.FreeAll();
-        renderer.UnregisterAll();
-        input.Clear();
-        input.AddContext("window_context", &mainContext);
 
         if (state == MENU)
         {
@@ -68,6 +64,11 @@ int main(int argc, char* argv[])
         }
         else if (state == RUNGAME)
         {
+            renderer.UnregisterAll();
+            resources.FreeAll();
+            input.Clear();
+            input.AddContext("window_context", &mainContext);
+
             EngineSystem engine(&services);
 
             Image bg;

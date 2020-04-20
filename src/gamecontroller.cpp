@@ -40,6 +40,10 @@ void GameController::OnCreate()
         SetPaused(!clock.IsPaused());
     };
 
+    gui->menuButton->OnClicked += [&] (const Button& caller) {
+
+    };
+
     gui->buildServerButton->OnClicked += [&] (const Button& caller) {
         if (true)
         {
@@ -646,22 +650,6 @@ void GameController::Update()
     {
         simulator->UpdateSim(*this);
         lastStepTime = clock.GetTime();
-    }
-
-    // Win condition
-    bool won = true;
-    for (auto server : servers)
-    {
-        /*if (server.connections.size() < 3)
-        {
-            won = false;
-            break;
-        }*/
-    }
-
-    if (won)
-    {
-        // TODO win state
     }
 
     clock.Update(delta.Time());

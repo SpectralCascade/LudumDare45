@@ -83,6 +83,8 @@
 		<Unit filename="src/gui.cpp" />
 		<Unit filename="src/gui.h" />
 		<Unit filename="src/main.cpp" />
+		<Unit filename="src/menu.cpp" />
+		<Unit filename="src/menu.h" />
 		<Unit filename="src/popup.cpp" />
 		<Unit filename="src/popup.h" />
 		<Unit filename="src/server.cpp" />

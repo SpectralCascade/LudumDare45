@@ -57,6 +57,14 @@ void GUI::OnCreate()
         3
     );
 
+    menuButton = entity->CreateChild()->AddComponent<Button>();
+    menuButton->sprite->AddState(
+        "default",
+        GetService<ResourceController>()->Get<Image>("assets/restart.png", *GetService<Renderer>(), SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STATIC),
+        true,
+        3
+    );
+
     // pause button
     pauseButton = entity->CreateChild()->AddComponent<Button>();
     pauseButton->sprite->AddState(
@@ -78,6 +86,7 @@ void GUI::OnCreate()
     input->AddInteractable(SID("ConnectServers")::str, *connectorButton);
     input->AddInteractable(SID("CutServers")::str, *cutConnectionButton);
     input->AddInteractable(SID("PausePlay")::str, *pauseButton);
+    input->AddInteractable(SID("GoMenu")::str, *menuButton);
 
     connectorButton->GetTransform()->SetWorldPosition(Vector2(50, (768 / 2) - 140));
     buildServerButton->GetTransform()->SetWorldPosition(Vector2(50, (768 / 2) - 40));
@@ -86,13 +95,15 @@ void GUI::OnCreate()
     purgeButton->GetTransform()->SetWorldPosition(Vector2(50, (768 / 2) + 260));
     pauseButton->GetTransform()->SetWorldPosition(Vector2(1280 / 2, 768 - 50));
 
+    menuButton->GetTransform()->SetWorldPosition(Vector2(50, 50));
+
     connectorButton->SetRenderLayer(80);
     buildServerButton->SetRenderLayer(80);
     cutConnectionButton->SetRenderLayer(80);
     repairButton->SetRenderLayer(80);
     purgeButton->SetRenderLayer(80);
     pauseButton->SetRenderLayer(80);
-
+    menuButton->SetRenderLayer(80);
 
     SetRenderLayer(80);
 
@@ -134,5 +145,15 @@ void GUI::Render(Renderer& renderer)
     timeText.SetText(renderer, *font, Utilities::Format("<b>Day {0}</b>", game->simulator->GetTimeStep()), true);
     timeText.Update(*font);
     timeText.Render(renderer, *font, Vector2(1280 - 200, 768 - 60));
+
+    if (global_game->clock.IsPaused())
+    {
+        pausedText.SetBounds(Vector2(1000, 1000));
+        pausedText.SetPointSize(36);
+        pausedText.mainColor = Colors::RED;
+        pausedText.SetText(renderer, *font, Utilities::Format("<b>GAME PAUSED</b>", game->simulator->GetTimeStep()), true);
+        pausedText.Update(*font);
+        pausedText.Render(renderer, *font, Vector2(1280 - pausedText.GetSize().x, 0));
+    }
 
 }

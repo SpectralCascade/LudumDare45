@@ -31,6 +31,8 @@ public:
 
     Button* pauseButton = nullptr;
 
+    Button* menuButton = nullptr;
+
     Popup* popup;
 
     void Highlight(Rect area, SDL_Color color = Colors::YELLOW);
@@ -38,6 +40,8 @@ public:
     TextLayout moneyText;
 
     TextLayout timeText;
+
+    TextLayout pausedText;
 
     GameController* game = nullptr;
 
