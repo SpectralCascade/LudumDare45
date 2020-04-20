@@ -14,7 +14,7 @@ class Automaton : public GraphicComponent
 public:
     DECLARE_COMPONENT(GraphicComponent, Automaton);
 
-    virtual void Simulate(GameSim& sim, GameController& game);
+    virtual void Simulate(GameSim& sim, GameController& game, int stage);
 
     virtual void Render(Renderer& renderer);
 
@@ -33,7 +33,7 @@ public:
 //  GAME LOGIC VARIABLES
 //
 
-    int money = 100;
+    int money = 145;
 
 private:
     unsigned int timeStep = 0;

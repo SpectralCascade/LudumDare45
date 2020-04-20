@@ -6,21 +6,21 @@
 
 using namespace Ossium;
 
-class Server;
+class Connection;
 
 enum ServerState
 {
     SERVER_BUILDING = 0,
-    SERVER_RUNNING,
-    SERVER_REPAIRING,
-    SERVER_FAULT
+    SERVER_RUNNING = 1,
+    SERVER_REPAIRING = 2,
+    SERVER_FAULT = 4
 };
 
 struct ServerSchema : public Schema<ServerSchema, 20>
 {
     DECLARE_BASE_SCHEMA(ServerSchema, 20);
 
-    M(vector<Server*>, connections);
+    M(vector<Connection*>, connections);
 
     M(float, health) = 1.0f;
 
@@ -42,7 +42,7 @@ public:
 
     void OnCreate();
 
-    virtual void Simulate(GameSim& sim, GameController& game);
+    virtual void Simulate(GameSim& sim, GameController& game, int stage);
 
     void Render(Renderer& renderer);
 

@@ -9,7 +9,7 @@ void Automaton::Render(Renderer& renderer)
 {
 }
 
-void Automaton::Simulate(GameSim& sim, GameController& game)
+void Automaton::Simulate(GameSim& sim, GameController& game, int stage)
 {
 }
 
@@ -21,7 +21,12 @@ void GameSim::UpdateSim(GameController& game)
     vector<Automaton*> automatons = entity->GetComponentsInChildren<Automaton>();
     for (Automaton* automaton : automatons)
     {
-        automaton->Simulate(*this, game);
+        automaton->Simulate(*this, game, 0);
+        //Log.Info("SIMULATING {0}", automaton->GetEntity()->name);
+    }
+    for (Automaton* automaton : automatons)
+    {
+        automaton->Simulate(*this, game, 1);
     }
 }
 

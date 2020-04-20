@@ -2,6 +2,7 @@
 #include "gamecontroller.h"
 #include "simulator.h"
 #include "gui.h"
+#include"connection.h"
 
 using namespace Ossium;
 
@@ -11,6 +12,7 @@ void Server::OnCreate()
 {
     // nasty hack because I'm not serialising
     OnLoadFinish();
+    entity->name = Utilities::Format("Server {0}", (void*)this);
     icon = entity->CreateChild()->AddComponent<Texture>();
     icon->SetRenderLayer(41);
     icon->SetSource(GetService<ResourceController>()->Get<Image>("assets/server_building.png", *GetService<Renderer>(), SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STATIC));
@@ -19,71 +21,75 @@ void Server::OnCreate()
     SetRenderLayer(42);
 }
 
-void Server::Simulate(GameSim& sim, GameController& game)
+void Server::Simulate(GameSim& sim, GameController& game, int stage)
 {
-    switch (status)
+    if (stage == 0)
     {
-        case SERVER_BUILDING:
+        switch (status)
         {
-            buildingTimeLeft--;
-            if (buildingTimeLeft <= 0)
+            case SERVER_BUILDING:
             {
-                status = SERVER_RUNNING;
+                buildingTimeLeft--;
+                if (buildingTimeLeft <= 0)
+                {
+                    status = SERVER_RUNNING;
+                    icon->SetSource(nullptr);
+                }
+                else
+                {
+                    icon->SetSource(GetService<ResourceController>()->Get<Image>("assets/server_building.png", *GetService<Renderer>(), SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STATIC));
+                }
+                break;
+            }
+            case SERVER_RUNNING:
+            {
+
+                daysSinceFault++;
+
                 icon->SetSource(nullptr);
+
+                // Chance of a fault is increased as connections increase
+                float fault_chance = (0.001f * (float)connections.size());
+
+                sim.money--;
+
+                if (daysSinceFault > 22 && rng.Float() < fault_chance)
+                {
+                    status = SERVER_FAULT;
+                    icon->SetSource(GetService<ResourceController>()->Get<Image>("assets/server_fault.png", *GetService<Renderer>(), SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STATIC));
+                }
+                break;
             }
-            else
+            case SERVER_FAULT:
             {
-                icon->SetSource(GetService<ResourceController>()->Get<Image>("assets/server_building.png", *GetService<Renderer>(), SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STATIC));
-            }
-            break;
-        }
-        case SERVER_RUNNING:
-        {
-            daysSinceFault++;
-
-            sim.money += (int)(rng.Float() < 0.4f) * connections.size();
-
-            icon->SetSource(nullptr);
-
-            // Chance of a fault is increased as connections increase
-            float fault_chance = (0.005f * (float)connections.size());
-
-            if (daysSinceFault > 10 && rng.Float() < fault_chance)
-            {
-                status = SERVER_FAULT;
+                daysSinceFault = 0;
                 icon->SetSource(GetService<ResourceController>()->Get<Image>("assets/server_fault.png", *GetService<Renderer>(), SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STATIC));
+                health -= 0.1f;
+                break;
             }
-            break;
-        }
-        case SERVER_FAULT:
-        {
-            daysSinceFault = 0;
-            icon->SetSource(GetService<ResourceController>()->Get<Image>("assets/server_fault.png", *GetService<Renderer>(), SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STATIC));
-            health -= 0.1f;
-            break;
-        }
-        case SERVER_REPAIRING:
-        {
-            icon->SetSource(GetService<ResourceController>()->Get<Image>("assets/server_repairing.png", *GetService<Renderer>(), SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STATIC));
-            if (health < 1.0f)
+            case SERVER_REPAIRING:
             {
-                health = Utilities::Clamp(health + 0.05f);
+                icon->SetSource(GetService<ResourceController>()->Get<Image>("assets/server_repairing.png", *GetService<Renderer>(), SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STATIC));
+                if (health < 1.0f)
+                {
+                    health = Utilities::Clamp(health + 0.05f);
+                }
+                if (health >= 1.0f)
+                {
+                    status = SERVER_RUNNING;
+                }
+                break;
             }
-            if (health >= 1.0f)
-            {
-                status = SERVER_RUNNING;
-            }
-            break;
         }
-    }
 
-    if (health <= 0)
-    {
-        auto itr = game.servers.find(serverId);
-        game.servers.erase(itr);
+        if (health <= 0)
+        {
+            auto itr = game.servers.find(serverId);
+            game.servers.erase(itr);
 
-        entity->GetComponentInChildren<Texture>()->GetEntity()->Destroy();
-        entity->Destroy();
+            entity->GetComponentInChildren<Texture>()->GetEntity()->Destroy();
+            entity->Destroy();
+        }
     }
 
 }
@@ -91,15 +97,22 @@ void Server::Simulate(GameSim& sim, GameController& game)
 void Server::OnDestroy()
 {
     // Clean up connections
-    for (auto server : connections)
+    for (auto connection : connections)
     {
-        for (auto itr = server->connections.begin(); itr < server->connections.end(); itr++)
+        if (connection != nullptr)
         {
-            if (*itr == this)
+            Server* otherServer = connection->server_a == this ? connection->server_b : connection->server_a;
+            for (auto itr = otherServer->connections.begin(); itr != otherServer->connections.end(); itr++)
             {
-                server->connections.erase(itr);
-                break;
+                if (connection == *itr)
+                {
+                    otherServer->connections.erase(itr);
+                    break;
+                }
             }
+            // Destroy the connection immediately
+            connection->GetEntity()->Destroy(true);
+            break;
         }
     }
 

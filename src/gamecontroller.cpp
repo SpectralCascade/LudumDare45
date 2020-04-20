@@ -2,6 +2,7 @@
 #include "server.h"
 #include "gui.h"
 #include "simulator.h"
+#include "connection.h"
 
 using namespace Ossium;
 
@@ -16,6 +17,8 @@ void GameController::OnCreate()
 {
     /// TODO: REMOVE ME
     clock.Scale(2);
+
+    connections_entity = entity;
 
     global_game = this;
     simulator = entity->AddComponent<GameSim>();
@@ -223,18 +226,31 @@ void GameController::RepairServer(Vector2 pos)
     // TODO: cancel noise
 }
 
+int ConnectionCost(Server* a, Server* b)
+{
+    return 10 + (a->GetTransform()->GetWorldPosition().Distance(b->GetTransform()->GetWorldPosition() * 0.2f));
+}
+
 void GameController::ConnectServers(Server* first, Server* second)
 {
+    if (simulator->money < ConnectionCost(first, second))
+    {
+        // Money not enough
+        return;
+    }
+
     if (first != second &&
-        Utilities::Pick<Server*>(
+        Utilities::Pick<Connection*>(
             first->connections,
-            [&] (auto server) {
-                return server == second;
+            [&] (auto connection) {
+                return connection->server_a == second || connection->server_b == second;
             }
     ) == nullptr)
     {
-        first->connections.push_back(second);
-        second->connections.push_back(first);
+        Connection* connection = connections_entity->CreateChild()->AddComponent<Connection>();
+        connection->Init(first, second);
+        first->connections.push_back(connection);
+        second->connections.push_back(connection);
     }
     // cancel sound
 }

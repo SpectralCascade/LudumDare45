@@ -76,6 +76,8 @@
 			<Add option="-Wall" />
 			<Add option="-fexceptions" />
 		</Compiler>
+		<Unit filename="src/connection.cpp" />
+		<Unit filename="src/connection.h" />
 		<Unit filename="src/gamecontroller.cpp" />
 		<Unit filename="src/gamecontroller.h" />
 		<Unit filename="src/gui.cpp" />

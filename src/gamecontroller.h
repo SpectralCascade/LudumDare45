@@ -82,6 +82,11 @@ public:
 
     void SetPaused(bool paused);
 
+    // Returns the cost of a connection to another server
+    int ConnectionCost(Server* a, Server* b);
+
+    void Tooltip(string text, Vector2 position);
+
     Server* FindServer(Vector2 pos);
 
     GUI* gui = nullptr;
@@ -104,6 +109,8 @@ private:
     MouseInteraction mouseMode = NONE;
 
     Server* connectee = nullptr;
+
+    Entity* connections_entity = nullptr;
 
 };
 
