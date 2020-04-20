@@ -18,7 +18,7 @@ REGISTER_COMPONENT(GameController);
 void GameController::OnCreate()
 {
     /// TODO: REMOVE ME
-    clock.Scale(2);
+    //clock.Scale(2);
 
     connections_entity = entity;
 
@@ -239,21 +239,6 @@ void GameController::OnCreate()
         MouseEvent::MOUSE_BUTTON_LEFT
     );
 
-    /*Rand rng;
-
-    for (int i = 0; i < serversToWin; i++)
-    {
-        Server* server = entity->GetScene()->CreateEntity(entity)->AddComponent<Server>();
-        server->GetTransform()->SetWorldPosition(Vector2(rng.Int(10, 1280 - 10), rng.Int(10, 768 - 10)));
-
-        servers.push_back(server);
-    }*/
-
-    gui->popup->AddMessage("<b>Welcome to SPOF: Single Point Of Failure!</b>\n\nIn this game, you are responsible for creating and keeping a world-wide network alive. But watch out! Server faults and malicious hackers seek to destroy your network. You must do whatever it takes to spread your servers all over the world without the network collapsing.");
-    gui->popup->ShowNextMessage();
-
-    SetPaused(true);
-
 }
 
 void GameController::SetPaused(bool paused)
@@ -280,8 +265,6 @@ void GameController::SetPaused(bool paused)
 
 void GameController::BuildServer(unsigned int pos)
 {
-    SetPaused(false);
-
     if (simulator->money < GameSim::server_cost)
     {
         // Show error
@@ -529,4 +512,12 @@ void GameController::Update()
 
     clock.Update(delta.Time());
 
+}
+
+void GameController::ActivateTutorial()
+{
+    isTutorial = true;
+    gui->popup->AddMessage("<b>Welcome to SPOF: Single Point Of Failure!</b>\n\nIn this game, you are responsible for creating and keeping a world-wide network alive. But watch out! Server faults and malicious hackers seek to destroy your network. You must do whatever it takes to spread your servers all over the world without the network collapsing.");
+    gui->popup->ShowNextMessage();
+    SetPaused(true);
 }

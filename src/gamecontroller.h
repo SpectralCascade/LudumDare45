@@ -97,6 +97,8 @@ public:
 
     void PurgeServer(Server* server);
 
+    void ActivateTutorial();
+
     GUI* gui = nullptr;
 
     Clock clock;
@@ -124,7 +126,7 @@ private:
 
     int pauseRequestStack = 0;
 
-    bool isTutorial = true;
+    bool isTutorial = false;
 
 };
 

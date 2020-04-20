@@ -16,7 +16,7 @@ public:
 
     void Init(GUI* gameGUI, InputController* inputController);
 
-    void AddMessage(string text, Rect area = {0, 0, 0, 0});
+    void AddMessage(string text, bool blackout = true, Rect area = {0, 0, 0, 0});
 
     void Render(Renderer& renderer);
 
@@ -34,6 +34,10 @@ private:
     stack<string> textMessages;
 
     stack<Rect> highlightAreas;
+
+    stack<bool> blockHighlights;
+
+    bool blockHighlight = true;
 
     TextLayout layout;
 

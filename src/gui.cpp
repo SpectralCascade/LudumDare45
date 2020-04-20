@@ -86,9 +86,17 @@ void GUI::OnCreate()
     purgeButton->GetTransform()->SetWorldPosition(Vector2(50, (768 / 2) + 260));
     pauseButton->GetTransform()->SetWorldPosition(Vector2(1280 / 2, 768 - 50));
 
+    connectorButton->SetRenderLayer(80);
+    buildServerButton->SetRenderLayer(80);
+    cutConnectionButton->SetRenderLayer(80);
+    repairButton->SetRenderLayer(80);
+    purgeButton->SetRenderLayer(80);
+    pauseButton->SetRenderLayer(80);
+
+
     SetRenderLayer(80);
 
-    popup = entity->AddComponent<Popup>();
+    popup = entity->CreateChild()->AddComponent<Popup>();
 
 }
 
