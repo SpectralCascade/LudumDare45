@@ -7,6 +7,12 @@ REGISTER_COMPONENT(Menu);
 void Menu::OnCreate()
 {
 
+    bg = entity->CreateChild()->AddComponent<Texture>();
+    Image* image = GetService<ResourceController>()->Get<Image>("assets/bg.png", *GetService<Renderer>(), SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STATIC);
+    bg->SetSource(image);
+    bg->SetRenderLayer(0);
+    bg->GetTransform()->SetWorldPosition(Vector2(1280 / 2, 768 / 2));
+
     tutorial = entity->CreateChild()->AddComponent<Button>();
     tutorial->sprite->AddState(
         "default",
@@ -45,6 +51,9 @@ void Menu::OnCreate()
     tutorial->OnClicked += [&] (const Button& b) { state = MENU_TUT; engine->Exit(); };
     play->OnClicked += [&] (const Button& b) { state = MENU_PLAY; engine->Exit(); };
     quit->OnClicked += [&] (const Button& b) { state = MENU_QUIT; engine->Exit(); };
+    play->SetRenderLayer(20);
+    quit->SetRenderLayer(20);
+    tutorial->SetRenderLayer(20);
 
     GetService<Renderer>()->SetBackgroundColor(Colors::BLACK);
 

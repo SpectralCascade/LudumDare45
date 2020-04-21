@@ -41,7 +41,7 @@ void GameController::OnCreate()
     };
 
     gui->menuButton->OnClicked += [&] (const Button& caller) {
-
+        // TODO go to main menu
     };
 
     gui->buildServerButton->OnClicked += [&] (const Button& caller) {

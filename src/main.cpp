@@ -14,29 +14,30 @@ int main(int argc, char* argv[])
 {
     InitialiseOssium();
 
-    InputController input;
     InputContext mainContext;
 
     Window* window = mainContext.AddHandler<Window>();
-    window->Init("Network Trouble", 1280, 768);
-
+    window->Init("SPOF: Single Point Of Failure", 1280, 768);
     Renderer renderer(window, 100);
-    ResourceController resources;
-
-    ServicesProvider services(&renderer, &resources, &input);
-
+    int state = RUNGAME;
     bool run_tutorial = true;
-
-    int state = MENU;
 
     bool quit = false;
     while (!quit)
     {
+        InputController input;
+        input.AddContext("window_context", &mainContext);
+
+        ResourceController resources;
+
+        ServicesProvider services(&renderer, &resources, &input);
+
+        renderer.UnregisterAll();
+        resources.FreeAll();
+        EngineSystem engine(&services);
 
         if (state == MENU)
         {
-            EngineSystem engine(&services);
-
             Menu* menu = engine.GetScene()->CreateEntity()->AddComponent<Menu>();
             menu->engine = &engine;
 
@@ -64,11 +65,6 @@ int main(int argc, char* argv[])
         }
         else if (state == RUNGAME)
         {
-            renderer.UnregisterAll();
-            resources.FreeAll();
-            input.Clear();
-            input.AddContext("window_context", &mainContext);
-
             EngineSystem engine(&services);
 
             Image bg;
@@ -95,6 +91,8 @@ int main(int argc, char* argv[])
                 delta.Update();
                 state = game->restart ? RUNGAME : MENU;
             }
+
+            break;
 
         }
 

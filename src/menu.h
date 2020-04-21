@@ -32,6 +32,8 @@ private:
     Button* play = nullptr;
     Button* quit = nullptr;
 
+    Texture* bg = nullptr;
+
 };
 
 #endif // MENU_H
